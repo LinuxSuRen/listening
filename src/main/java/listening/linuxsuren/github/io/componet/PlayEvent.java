@@ -22,4 +22,8 @@ public interface PlayEvent {
     void play(String file);
 
     void stop();
+
+    boolean isPlaying();
+
+    void setTitleLabel(String titleLabel);
 }

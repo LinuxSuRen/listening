@@ -27,6 +27,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +95,7 @@ public class CollectionPanel extends JPanel {
 
                 JPanel panel = new JPanel();
                 panel.add(label);
+                panel.add(new JLabel(i.getPublishDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))));
 
                 episodeListPanel.add(panel);
 

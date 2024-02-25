@@ -17,8 +17,10 @@ limitations under the License.
 package listening.linuxsuren.github.io;
 
 import listening.linuxsuren.github.io.componet.MainPanel;
+import listening.linuxsuren.github.io.server.CacheServer;
 
 import javax.swing.*;
+import java.io.IOException;
 
 public class Startup {
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -28,6 +30,13 @@ public class Startup {
         frame.getContentPane().add(new MainPanel());
 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        new Thread(() -> {
+            try {
+                new CacheServer().start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
 
         frame.setLocationRelativeTo(null);
         frame.setSize(1300, 600);

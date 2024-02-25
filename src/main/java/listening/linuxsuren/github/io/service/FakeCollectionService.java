@@ -36,6 +36,9 @@ public class FakeCollectionService implements CollectionService {
         podcasts.add(new Podcast("真相壁炉", "https://www.ximalaya.com/album/75738459.xml"));
         podcasts.add(new Podcast("历史剥壳", "http://www.ximalaya.com/album/24355721.xml"));
         podcasts.add(new Podcast("KubeSphere Talk", "https://feed.xyzfm.space/nxmnjxgmu6r7"));
+        podcasts.add(new Podcast("時事英文", "https://anchor.fm/s/53e3c15c/podcast/rss"));
+        podcasts.add(new Podcast("All Ears English", "https://feeds.megaphone.fm/allearsenglish"));
+        podcasts.add(new Podcast("VOA Learning English", "https://learningenglish.voanews.com/podcast/?count=20&zoneId=1689"));
         return podcasts;
     }
 
@@ -72,6 +75,7 @@ public class FakeCollectionService implements CollectionService {
                 episode.setHtmlNote(i.getDescription().getText());
                 episode.setRssURL(rssAddress);
                 episode.setDuration(i.getDuration());
+                episode.setPublishDate(i.getPubDate());
                 if (i.getEnclosure() != null) {
                     episode.setAudioURL(i.getEnclosure().getUrl());
                     episode.setLength(i.getEnclosure().getLength());
