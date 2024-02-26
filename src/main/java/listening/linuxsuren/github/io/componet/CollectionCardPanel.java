@@ -16,6 +16,7 @@ limitations under the License.
 
 package listening.linuxsuren.github.io.componet;
 
+import listening.linuxsuren.github.io.server.CacheServer;
 import listening.linuxsuren.github.io.service.CollectionService;
 import listening.linuxsuren.github.io.service.Podcast;
 
@@ -42,7 +43,7 @@ public class CollectionCardPanel extends JPanel {
             collectionService.loadPodcast(podcast);
 
             try {
-                BufferedImage image = ImageIO.read(new URL(podcast.getLogoURL()));
+                BufferedImage image = ImageIO.read(CacheServer.wrapURL(podcast.getLogoURL()));
 
                 JLabel label = new JLabel();
                 label.setIcon(new ImageIcon(image.getScaledInstance(80, 80, Image.SCALE_SMOOTH)));

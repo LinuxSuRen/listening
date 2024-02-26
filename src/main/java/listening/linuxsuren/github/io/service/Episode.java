@@ -17,6 +17,7 @@ limitations under the License.
 package listening.linuxsuren.github.io.service;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 
 public class Episode {
     private String title;
@@ -25,6 +26,7 @@ public class Episode {
     private String mediaType;
     private String htmlNote;
     private String rssURL;
+    private ZonedDateTime publishDate;
     private Duration duration;
 
     public Episode() {}
@@ -79,6 +81,14 @@ public class Episode {
 
     public void setRssURL(String rssURL) {
         this.rssURL = rssURL;
+    }
+
+    public ZonedDateTime getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(ZonedDateTime publishDate) {
+        this.publishDate = publishDate;
     }
 
     public Duration getDuration() {

@@ -64,6 +64,7 @@ public class EpisodePanel extends JPanel implements Background {
 
                     if (playEvent != null) {
                         playEvent.play(audioURL.toURI().toString());
+                        playEvent.setTitleLabel(episode.getTitle());
                     }
                 } catch (MalformedURLException ex) {
                     throw new RuntimeException(ex);
@@ -102,6 +103,6 @@ public class EpisodePanel extends JPanel implements Background {
 
     @Override
     public boolean isRunning() {
-        return false;
+        return playEvent.isPlaying();
     }
 }
