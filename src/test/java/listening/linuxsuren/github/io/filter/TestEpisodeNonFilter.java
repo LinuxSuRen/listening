@@ -16,6 +16,7 @@
 
 package listening.linuxsuren.github.io.filter;
 
+import javafx.util.Duration;
 import listening.linuxsuren.github.io.service.Episode;
 import org.junit.Test;
 
@@ -24,6 +25,8 @@ import static org.junit.Assert.assertTrue;
 public class TestEpisodeNonFilter {
     @Test
     public void match() {
+        System.out.println("a 00:12 dfsf".replaceAll("(\\d\\d:\\d\\d)", "<a href=\"#$1\">$1</a>"));
+        System.out.println(Duration.valueOf("10s").add(Duration.valueOf("1m")).toSeconds());
         assertTrue(new EpisodeNonFilter().match(new Episode()));
     }
 }

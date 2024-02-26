@@ -26,7 +26,6 @@ import java.net.http.HttpRequest;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class CacheServer implements HttpHandler {
 
 
     public void start() throws IOException {
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
         InetSocketAddress address = new InetSocketAddress("127.0.0.1", 0);
         HttpServer server = HttpServer.create(address, 0);
         server.setExecutor(threadPoolExecutor);
@@ -54,8 +53,12 @@ public class CacheServer implements HttpHandler {
 
     @Override
     public void handle(HttpExchange e) throws IOException {
+        String query = e.getRequestURI().getRawQuery();
         String path = e.getRequestURI().getPath();
         path = path.substring(1);
+        if (query != null && !query.isEmpty()) {
+            path += "?" + query;
+        }
         e.getRequestHeaders().forEach((a, b) -> {
             System.out.println(a + "==" + b);
         });
@@ -70,15 +73,15 @@ public class CacheServer implements HttpHandler {
             throw new RuntimeException(ex);
         }
 
-        if (!cacheFile.exists() || cacheFile.length() == 0) {
-            System.out.println("start to cache " + path);
-            boolean stillCache = cacheQueue.get(path) != null;
+        boolean stillCache = cacheQueue.get(path) != null;
+        if (!cacheFile.exists() || cacheFile.length() == 0 || stillCache) {
             if (!stillCache) {
                 cacheQueue.put(path, "");
             }
 
+            System.out.println("start to cache (still: " + stillCache + ") " + path);
             ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
-            FileOutputStream output = null;
+            OutputStream output = null;
             try {
                 if (!stillCache) {
                     output = new FileOutputStream(cacheFile);
@@ -90,15 +93,22 @@ public class CacheServer implements HttpHandler {
                         .build();
 
                 HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
-                HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+                HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
-                byte[] data = response.body();
-                if (!stillCache) {
-                    output.write(data);
+                try (InputStream respInput = response.body()) {
+                    byte[] buf = new byte[1024];
+                    int count = respInput.read(buf);
+                    while (count != -1) {
+                        if (output != null) {
+                            output.write(buf, 0, count);
+                        }
+
+                        byteOutput.write(buf, 0, count);
+                        count = respInput.read(buf);
+                    }
                 }
 
-                byteOutput.write(data);
-
+                cacheQueue.remove(path);
                 response.headers().map().forEach((k, values) -> {
                     values.forEach( v -> {
                         e.getResponseHeaders().add(k, v);
