@@ -4,6 +4,8 @@
 name: Maven Package
 
 on:
+  release:
+    types: [created]
   push:
     tags:
       - "*"
@@ -37,7 +39,6 @@ jobs:
         with:
           file: target/listening-gui.exe
           github-token: ${{ github.token }}
-          release-url: ${{ steps.create_release.outputs.upload_url }}
 
       - name: Upload Coverage
         if: github.ref == 'refs/heads/master'
