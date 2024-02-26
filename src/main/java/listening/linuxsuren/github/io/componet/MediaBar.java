@@ -17,8 +17,6 @@ limitations under the License.
 package listening.linuxsuren.github.io.componet;
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -30,6 +28,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 public class MediaBar extends HBox { // MediaBar extends Horizontal Box
     private Slider time = new Slider(); // Slider for time
@@ -40,10 +40,12 @@ public class MediaBar extends HBox { // MediaBar extends Horizontal Box
 
     public MediaBar(MediaPlayer play) {
         player = play;
+        time.setShowTickLabels(true);
+        vol.setShowTickLabels(true);
 
         setAlignment(Pos.CENTER); // setting the HBox to center
         setPadding(new Insets(5, 10, 5, 10));
-        vol.setPrefWidth(70);
+        vol.setPrefWidth(120);
         vol.setMinWidth(30);
         vol.setValue(100);
         HBox.setHgrow(time, Priority.ALWAYS);
@@ -108,14 +110,28 @@ public class MediaBar extends HBox { // MediaBar extends Horizontal Box
         Platform.runLater(() -> {
             // Updating to the new time value
             // This will move the slider while running your video
-            time.setValue(
-                    player.getTotalDuration()
-                            .toMillis()
-                            * 100);
+            time.setValue(player.getCurrentTime().toMillis() * 100 / player.getStopTime().toMillis());
         });
     }
 
     public void setPlayer(MediaPlayer player) {
         this.player = player;
+    }
+
+    public void reset() {
+        time.setValue(0);
+        time.setLabelFormatter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double aDouble) {
+                Duration du = player.getStopTime().multiply(aDouble / 100);
+
+                return Math.round(du.toMinutes()) + "m";
+            }
+
+            @Override
+            public Double fromString(String s) {
+                return null;
+            }
+        });
     }
 }

@@ -64,6 +64,10 @@ public class Player extends BorderPane implements PlayEvent {
         }
         media = new Media(audioURL);
         player = new MediaPlayer(media);
+        player.setOnReady(() -> {
+            player.setStopTime(player.getStopTime());
+            bar.reset();
+        });
         view.setMediaPlayer(player);
         player.play();
         bar.setPlayer(player);
@@ -86,5 +90,22 @@ public class Player extends BorderPane implements PlayEvent {
         Platform.runLater(() -> {
             titleLabel.setText(title);
         });
+    }
+
+    @Override
+    public void seek(String timeLine) {
+        Duration du = null;
+        for (String i : timeLine.split(":")) {
+            if (i.startsWith("0")) {
+                i = i.substring(1);
+            }
+            if (du == null) {
+                du = Duration.valueOf(i);
+            } else {
+                du.add(Duration.valueOf(i));
+            }
+        }
+        player.seek(du);
+        bar.updatesValues();
     }
 }

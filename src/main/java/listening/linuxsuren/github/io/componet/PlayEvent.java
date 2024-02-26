@@ -26,4 +26,6 @@ public interface PlayEvent {
     boolean isPlaying();
 
     void setTitleLabel(String titleLabel);
+
+    void seek(String timeLine);
 }

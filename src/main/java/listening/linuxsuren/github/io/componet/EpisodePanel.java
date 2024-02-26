@@ -19,6 +19,8 @@ package listening.linuxsuren.github.io.componet;
 import listening.linuxsuren.github.io.service.Episode;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -37,6 +39,15 @@ public class EpisodePanel extends JPanel implements Background {
         editorPane.setContentType("text/html");
         editorPane.setText(episode.getHtmlNote());
         editorPane.setEditable(false);
+        editorPane.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+                    return;
+                }
+                playEvent.seek(e.getDescription());
+            }
+        });
 
         this.setLayout(new BorderLayout());
         this.add(createToolPanel(episode), BorderLayout.NORTH);

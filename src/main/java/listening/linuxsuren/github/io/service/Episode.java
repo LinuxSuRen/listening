@@ -68,8 +68,12 @@ public class Episode {
     }
 
     public String getHtmlNote() {
-        return htmlNote;
-    }
+        String note = htmlNote.replaceAll("(\\d\\d):(\\d\\d):(\\d\\d)", "<a href=\"$1h:$2h:$3s\">$1:$2:$3</a>");
+        if (note.equals(htmlNote)) {
+            note = htmlNote.replaceAll("(\\d\\d):(\\d\\d)", "<a href=\"$1m:$2s\">$1:$2</a>");
+        }
+        return note;
+   }
 
     public void setHtmlNote(String htmlNote) {
         this.htmlNote = htmlNote;
