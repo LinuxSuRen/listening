@@ -45,6 +45,7 @@ public class CacheServer implements HttpHandler {
         server.createContext("/", this);
         server.start();
         port = server.getAddress().getPort();
+        System.out.println("started cache server with port: " + port);
     }
 
     private String getCacheDir() {
@@ -134,7 +135,12 @@ public class CacheServer implements HttpHandler {
                 OutputStream writer = e.getResponseBody()) {
                 e.sendResponseHeaders(200, cacheFile.length());
 
-                writer.write(input.readAllBytes());
+                byte[] buf = new byte[1024];
+                int count = input.read(buf);
+                while(count != -1) {
+                    writer.write(buf, 0, count);
+                    count = input.read(buf);
+                }
             }
         }
     }
