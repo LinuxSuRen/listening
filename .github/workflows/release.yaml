@@ -37,8 +37,8 @@ jobs:
         uses: csexton/release-asset-action@v3
         if: github.ref != 'refs/heads/master'
         with:
-          file: listening/target/listening.exe
-          github-token: ${{ github.token }}
+          file: target/listening.exe
+          github-token: ${{ secrets.GH_PUBLISH_SECRETS }}
 
       - name: Upload Coverage
         if: github.ref == 'refs/heads/master'
