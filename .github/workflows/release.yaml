@@ -31,7 +31,7 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Build with Maven
-        run: mvn -B test package --file pom.xml
+        run: mvn -B test package launch4j:launch4j --file pom.xml
 
       - name: Upload asset to release
         uses: csexton/release-asset-action@v3
