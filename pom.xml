@@ -14,6 +14,8 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <build>
@@ -79,16 +81,20 @@
                             <headerType>gui</headerType>
                             <outfile>${project.build.directory}/listening-gui.exe</outfile>
                             <jar>${project.build.directory}/${artifactId}-${version}.jar</jar>
+                            <downloadUrl>http://java.com/download</downloadUrl>
                             <errTitle>TypingError</errTitle>
                             <classPath>
                                 <mainClass>listening.linuxsuren.github.io.Startup</mainClass>
                                 <addDependencies>true</addDependencies>
                                 <preCp>anything</preCp>
                             </classPath>
-<!--                             <jre>
-                                <path>${java.home}</path>
-                                <minVersion>1.11.0</minVersion>
-                            </jre> -->
+                            <jre>
+                                <opts>
+                                    <opt>-Dfile.encoding=UTF-8</opt>
+                                </opts>
+<!--                                <path>${java.home}</path>-->
+<!--                                <minVersion>1.11.0</minVersion>-->
+                            </jre>
                         </configuration>
                     </execution>
                 </executions>

@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 
 public class Episode {
+    private String podcast;
     private String title;
     private String audioURL;
     private long length;
@@ -33,6 +34,14 @@ public class Episode {
 
     public Episode(String title) {
         this.title = title;
+    }
+
+    public String getPodcast() {
+        return podcast;
+    }
+
+    public void setPodcast(String podcast) {
+        this.podcast = podcast;
     }
 
     public String getTitle() {

@@ -24,9 +24,6 @@ import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class EpisodePanel extends JPanel implements Background {
     private final JEditorPane editorPane = new JEditorPane();
@@ -70,19 +67,9 @@ public class EpisodePanel extends JPanel implements Background {
         playBut.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    URL audioURL = new URL(episode.getAudioURL());
-
-                    if (playEvent != null) {
-                        playEvent.play(audioURL.toURI().toString());
-                        playEvent.setTitleLabel(episode.getTitle());
-                    }
-                } catch (MalformedURLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (URISyntaxException ex) {
-                    throw new RuntimeException(ex);
+                if (playEvent != null) {
+                    playEvent.play(episode);
+                    playEvent.setTitleLabel(episode.getTitle());
                 }
             }
         });

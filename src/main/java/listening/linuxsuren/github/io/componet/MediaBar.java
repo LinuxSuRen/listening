@@ -31,10 +31,10 @@ import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
-public class MediaBar extends HBox { // MediaBar extends Horizontal Box
-    private Slider time = new Slider(); // Slider for time
-    private Slider vol = new Slider(); // Slider for volume
-    private Button PlayButton = new Button("||"); // For pausing the player
+public class MediaBar extends HBox {
+    private Slider time = new Slider();
+    private Slider vol = new Slider();
+    private Button playButton = new Button("||");
     private Label volume = new Label("Volume: ");
     private MediaPlayer player;
 
@@ -49,19 +49,19 @@ public class MediaBar extends HBox { // MediaBar extends Horizontal Box
         vol.setMinWidth(30);
         vol.setValue(100);
         HBox.setHgrow(time, Priority.ALWAYS);
-        PlayButton.setPrefWidth(30);
+        playButton.setPrefWidth(30);
 
-        getChildren().add(PlayButton);
+        getChildren().add(playButton);
         getChildren().add(time);
         getChildren().add(volume);
         getChildren().add(vol);
 
         // Adding Functionality
         // to play the media player
-        PlayButton.setOnAction(new EventHandler<ActionEvent>() {
+        playButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 Status status = player.getStatus();
-                if (status == status.PLAYING) {
+                if (status == Status.PLAYING) {
 
                     // If the status is Video playing
                     if (player.getCurrentTime().greaterThanOrEqualTo(player.getTotalDuration())) {
@@ -69,24 +69,18 @@ public class MediaBar extends HBox { // MediaBar extends Horizontal Box
                         // If the player is at the end of video
                         player.seek(player.getStartTime()); // Restart the video
                         player.play();
-                    }
-                    else {
+                    } else {
                         // Pausing the player
                         player.pause();
 
-                        PlayButton.setText(">");
+                        playButton.setText(">");
                     }
-                }
-
-                if (status == Status.HALTED || status == Status.STOPPED || status == Status.PAUSED) {
-                    player.play(); // Start the video
-                    PlayButton.setText("||");
+                } else if (status == Status.HALTED || status == Status.STOPPED || status == Status.PAUSED || status == Status.READY) {
+                    player.play();
+                    playButton.setText("||");
                 }
             }
         });
-
-        // Providing functionality to time slider
-        player.currentTimeProperty().addListener(ov -> updatesValues());
 
         // Inorder to jump to the certain part of video
         time.valueProperty().addListener(ov -> {
@@ -116,6 +110,9 @@ public class MediaBar extends HBox { // MediaBar extends Horizontal Box
 
     public void setPlayer(MediaPlayer player) {
         this.player = player;
+        player.currentTimeProperty().addListener(ov -> {
+            updatesValues();
+        });
     }
 
     public void reset() {

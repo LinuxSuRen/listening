@@ -19,8 +19,8 @@ package listening.linuxsuren.github.io.componet;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import listening.linuxsuren.github.io.service.CollectionService;
-import listening.linuxsuren.github.io.service.FakeCollectionService;
+import listening.linuxsuren.github.io.server.CacheServer;
+import listening.linuxsuren.github.io.service.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,8 +52,26 @@ public class MainPanel extends JPanel {
     }
     
     private void addPlayer() {
-        player = new Player("https://fake");
-        player.setVisible(false);
+        String lastDuration = "";
+        Episode episode = new Episode();
+        episode.setAudioURL("https://fake");
+        try {
+            Profile profile = new LocalProfileService().getProfile();
+            episode.setAudioURL(CacheServer.wrap(profile.getCurrentEpisode().getAudioURL()));
+            lastDuration = profile.getCurrentEpisode().getDuration() + "ms";
+            episode.setTitle(profile.getCurrentEpisode().getEpisode());
+            episode.setPodcast(profile.getCurrentEpisode().getPodcast());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (lastDuration.isEmpty()) {
+                lastDuration = "0ms";
+            }
+        }
+        
+        player = new Player(episode);
+        player.seek(lastDuration);
+        player.setTitleLabel(episode.getTitle());
         Scene scene = new Scene(player, javafx.scene.paint.Color.ALICEBLUE);
         fxPanel.setScene(scene);
     }
