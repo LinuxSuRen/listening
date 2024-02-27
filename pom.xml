@@ -102,21 +102,27 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <outfile>${project.build.directory}/listening-gui.exe</outfile>
-                            <jar>${project.build.directory}/${artifactId}-${version}.jar</jar>
+<!--                            <jar>${project.build.directory}/${artifactId}-${version}.jar</jar>-->
                             <downloadUrl>http://java.com/download</downloadUrl>
                             <errTitle>TypingError</errTitle>
                             <classPath>
                                 <mainClass>listening.linuxsuren.github.io.Startup</mainClass>
                                 <addDependencies>true</addDependencies>
-                                <preCp>anything</preCp>
+                                <jarLocation>lib/</jarLocation>
+                                <preCp>./lib/*.jar</preCp>
                             </classPath>
                             <jre>
                                 <opts>
                                     <opt>-Dfile.encoding=UTF-8</opt>
                                 </opts>
+                                <minVersion>1.20.0</minVersion>
 <!--                                <path>${java.home}</path>-->
-<!--                                <minVersion>1.11.0</minVersion>-->
                             </jre>
+                            <versionInfo>
+                                <copyright>Apache 2.0</copyright>
+                                <productName>Listening</productName>
+                                <originalFilename>listening-gui.exe</originalFilename>
+                            </versionInfo>
                         </configuration>
                     </execution>
                 </executions>
@@ -187,22 +193,22 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>20.0.2</version>
+            <version>20</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>20.0.2</version>
+            <version>20</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>20.0.2</version>
+            <version>20</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>20.0.2</version>
+            <version>20</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
