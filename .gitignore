@@ -16,3 +16,5 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 .idea
+src/main/resources/listening/linuxsuren/github/io/service/index.yaml
+src/main/resources/listening/linuxsuren/github/io/service/README.md

@@ -29,6 +29,9 @@ import listening.linuxsuren.github.io.service.Episode;
 import listening.linuxsuren.github.io.service.LocalProfileService;
 import listening.linuxsuren.github.io.service.ToDoEpisode;
 
+import java.io.IOException;
+import java.util.List;
+
 public class Player extends BorderPane implements PlayEvent {
     private Media media;
     private MediaPlayer player;
@@ -56,6 +59,7 @@ public class Player extends BorderPane implements PlayEvent {
             todoEpisode.setDuration(player.getCurrentTime().toMillis());
             new LocalProfileService().setCurrentEpisode(todoEpisode);
         });
+        player.setOnEndOfMedia(new playNext(this));
 
         // inorder to add the view
         setCenter(mpane);
@@ -95,6 +99,7 @@ public class Player extends BorderPane implements PlayEvent {
             todoEpisode.setDuration(player.getCurrentTime().toMillis());
             new LocalProfileService().setCurrentEpisode(todoEpisode);
         });
+        player.setOnEndOfMedia(new playNext(this));
         view.setMediaPlayer(player);
         player.play();
         this.setVisible(true);
@@ -140,5 +145,28 @@ public class Player extends BorderPane implements PlayEvent {
         player.setStartTime(du);
         player.seek(du);
         bar.updatesValues();
+    }
+
+    static class playNext implements Runnable {
+        private final PlayEvent playEvent;
+
+        public playNext(PlayEvent e) {
+            this.playEvent = e;
+        }
+
+        @Override
+        public void run() {
+            LocalProfileService service = new LocalProfileService();
+            try {
+                service.removeItem(service.getProfile().getCurrentEpisode());
+
+                List<ToDoEpisode> todoList = service.getProfile().getEpisodes();
+                if (todoList != null && !todoList.isEmpty()) {
+                    playEvent.play(todoList.get(0).toEpisode());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

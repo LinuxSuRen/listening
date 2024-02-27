@@ -19,28 +19,85 @@ package listening.linuxsuren.github.io.service;
 import be.ceau.podcastparser.PodcastParser;
 import be.ceau.podcastparser.exceptions.InvalidFeedFormatException;
 import be.ceau.podcastparser.models.core.Feed;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FakeCollectionService implements CollectionService {
+public class SimpleCollectionService implements CollectionService {
+    private PodcastIndex index = null;
+
+    public SimpleCollectionService() {
+        try (InputStream input = this.getClass().getClassLoader().getResourceAsStream("listening/linuxsuren/github/io/service/index.yaml")) {
+            Representer representer = new Representer(new DumperOptions());
+            representer.getPropertyUtils().setSkipMissingProperties(true);
+            LoaderOptions loaderOptions = new LoaderOptions();
+            Yaml yaml = new Yaml(new Constructor(PodcastIndex.class, loaderOptions), representer);
+
+            index = yaml.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        new Thread(() -> {
+            if (index == null || index.getIndexServer() == null || index.getIndexServer().isEmpty()) {
+                return;
+            }
+
+            HttpRequest request = null;
+            try {
+                request = HttpRequest.newBuilder()
+                        .uri(new URI(index.getIndexServer()))
+                        .GET()
+                        .build();
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+
+            HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
+
+            try {
+                HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+                if (response.statusCode() != 200) {
+                    System.out.println("failed to load the index, status code: " + response.statusCode());
+                    return;
+                }
+
+                try (InputStream input = response.body()) {
+                    Representer representer = new Representer(new DumperOptions());
+                    representer.getPropertyUtils().setSkipMissingProperties(true);
+                    LoaderOptions loaderOptions = new LoaderOptions();
+                    Yaml yaml = new Yaml(new Constructor(PodcastIndex.class, loaderOptions), representer);
+
+                    index = yaml.load(input);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
     @Override
     public List<Podcast> getAll() {
-        List<Podcast> podcasts = new ArrayList<>();
-        podcasts.add(new Podcast("开源面对面", "https://feeds.osf2f.net/osf2f.xml"));
-        podcasts.add(new Podcast("刀熊读乐乐", "https://www.ximalaya.com/album/38346992.xml"));
-        podcasts.add(new Podcast("创业内幕", "https://www.ximalaya.com/album/20119986.xml"));
-        podcasts.add(new Podcast("真相壁炉", "https://www.ximalaya.com/album/75738459.xml"));
-        podcasts.add(new Podcast("历史剥壳", "http://www.ximalaya.com/album/24355721.xml"));
-        podcasts.add(new Podcast("KubeSphere Talk", "https://feed.xyzfm.space/nxmnjxgmu6r7"));
-        podcasts.add(new Podcast("時事英文", "https://anchor.fm/s/53e3c15c/podcast/rss"));
-        podcasts.add(new Podcast("All Ears English", "https://feeds.megaphone.fm/allearsenglish"));
-        podcasts.add(new Podcast("VOA Learning English", "https://learningenglish.voanews.com/podcast/?count=20&zoneId=1689"));
-        return podcasts;
+        return index.getItems();
     }
 
     @Override

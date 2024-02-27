@@ -1,0 +1,16 @@
+indexServer: https://linuxsuren.github.io/listening/index.yaml
+items:
+  - name: 开源面对面
+    rss: https://feeds.osf2f.net/osf2f.xml
+  - name: 刀熊读乐乐
+    rss: https://www.ximalaya.com/album/38346992.xml
+  - name: 真相壁炉
+    rss: https://www.ximalaya.com/album/75738459.xml
+  - name: 历史剥壳
+    rss: http://www.ximalaya.com/album/24355721.xml
+  - name: KubeSphere Talk
+    rss: https://feed.xyzfm.space/nxmnjxgmu6r7
+  - name: 后互联网时代的乱弹
+    rss: https://proxy.wavpub.com/pie.xml
+  - name: freeCodeCamp 中文播客
+    rss: https://feeds.transistor.fm/freecodecamp-podcast-in-chinese
