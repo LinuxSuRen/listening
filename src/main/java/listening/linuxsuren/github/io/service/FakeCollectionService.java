@@ -17,6 +17,7 @@ limitations under the License.
 package listening.linuxsuren.github.io.service;
 
 import be.ceau.podcastparser.PodcastParser;
+import be.ceau.podcastparser.exceptions.InvalidFeedFormatException;
 import be.ceau.podcastparser.models.core.Feed;
 
 import java.io.IOException;
@@ -52,6 +53,9 @@ public class FakeCollectionService implements CollectionService {
             feed.getCategories().forEach(category -> podcast.getCategories().add(category.getName()));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
+        } catch (InvalidFeedFormatException e) {
+            System.out.println("invalid feed format: " + podcast.getRss());
+            throw e;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,6 +75,7 @@ public class FakeCollectionService implements CollectionService {
 
             feed.getItems().forEach((i) -> {
                 Episode episode = new Episode();
+                episode.setPodcast(feed.getTitle());
                 episode.setTitle(i.getTitle().getText());
                 episode.setHtmlNote(i.getDescription().getText());
                 episode.setRssURL(rssAddress);

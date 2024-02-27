@@ -23,13 +23,15 @@ import listening.linuxsuren.github.io.service.Podcast;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Arrays;
 
 public class CollectionCardPanel extends JPanel {
     private Podcast podcast;
+    private MouseListener mouseListener;
 
     public CollectionCardPanel(Podcast podcast) {
         this.podcast = podcast;
@@ -47,6 +49,8 @@ public class CollectionCardPanel extends JPanel {
 
                 JLabel label = new JLabel();
                 label.setIcon(new ImageIcon(image.getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
+                label.addMouseListener(mouseListener);
+                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
                 add(label);
             } catch (MalformedURLException e) {
@@ -58,5 +62,14 @@ public class CollectionCardPanel extends JPanel {
             repaint();
             revalidate();
         }).start();
+    }
+
+    @Override
+    public synchronized void addMouseListener(MouseListener l) {
+        this.mouseListener = l;
+        Arrays.stream(this.getComponents()).forEach((c) -> {
+            c.addMouseListener(l);
+            c.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        });
     }
 }

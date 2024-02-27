@@ -28,6 +28,7 @@ public class Startup {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.getContentPane().add(new MainPanel());
+        System.setProperty("file.encoding", "UTF-8");
 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         new Thread(() -> {

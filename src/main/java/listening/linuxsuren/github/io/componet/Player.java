@@ -25,6 +25,9 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import listening.linuxsuren.github.io.server.CacheServer;
+import listening.linuxsuren.github.io.service.Episode;
+import listening.linuxsuren.github.io.service.LocalProfileService;
+import listening.linuxsuren.github.io.service.ToDoEpisode;
 
 public class Player extends BorderPane implements PlayEvent {
     private Media media;
@@ -33,18 +36,32 @@ public class Player extends BorderPane implements PlayEvent {
     private Pane mpane;
     private MediaBar bar;
     private Label titleLabel;
-    public Player(String file) {
-        media = new Media(file);
+
+    public Player(Episode episode) {
+        media = new Media(episode.getAudioURL());
         player = new MediaPlayer(media);
         view = new MediaView(player);
         mpane = new Pane();
         titleLabel = new Label();
         mpane.getChildren().add(view); // Calling the function getChildren
+        player.setOnReady(() -> {
+            player.setStopTime(player.getStopTime());
+            bar.reset();
+        });
+        player.currentTimeProperty().addListener(ov -> {
+            ToDoEpisode todoEpisode = new ToDoEpisode();
+            todoEpisode.setPodcast(episode.getPodcast());
+            todoEpisode.setEpisode(episode.getTitle());
+            todoEpisode.setAudioURL(episode.getAudioURL());
+            todoEpisode.setDuration(player.getCurrentTime().toMillis());
+            new LocalProfileService().setCurrentEpisode(todoEpisode);
+        });
 
         // inorder to add the view
         setCenter(mpane);
-        bar = new MediaBar(player); // Passing the player to MediaBar
-        setBottom(bar); // Setting the MediaBar at bottom
+        bar = new MediaBar(player);
+        bar.setPlayer(player);
+        setBottom(bar);
         setTop(titleLabel);
         setStyle("-fx-background-color:#bfc2c7");
     }
@@ -55,22 +72,31 @@ public class Player extends BorderPane implements PlayEvent {
         player.play();
     }
 
-    public void play(String audioURL) {
+    public void play(Episode episode) {
         player.stop();
         player.dispose();
 
+        String audioURL = episode.getAudioURL();
         if (audioURL.startsWith("https://") || audioURL.startsWith("http://")) {
             audioURL = CacheServer.wrap(audioURL);
         }
         media = new Media(audioURL);
         player = new MediaPlayer(media);
+        bar.setPlayer(player);
         player.setOnReady(() -> {
             player.setStopTime(player.getStopTime());
             bar.reset();
         });
+        player.currentTimeProperty().addListener(ov -> {
+            ToDoEpisode todoEpisode = new ToDoEpisode();
+            todoEpisode.setPodcast(episode.getPodcast());
+            todoEpisode.setEpisode(episode.getTitle());
+            todoEpisode.setAudioURL(episode.getAudioURL());
+            todoEpisode.setDuration(player.getCurrentTime().toMillis());
+            new LocalProfileService().setCurrentEpisode(todoEpisode);
+        });
         view.setMediaPlayer(player);
         player.play();
-        bar.setPlayer(player);
         this.setVisible(true);
     }
 
@@ -99,12 +125,19 @@ public class Player extends BorderPane implements PlayEvent {
             if (i.startsWith("0")) {
                 i = i.substring(1);
             }
+            if (i.isEmpty() || "ms".equals(i) || "m".equals(i) || "h".equals(i)) {
+                continue;
+            }
             if (du == null) {
                 du = Duration.valueOf(i);
             } else {
                 du.add(Duration.valueOf(i));
             }
         }
+        if (du == null) {
+            return;
+        }
+        player.setStartTime(du);
         player.seek(du);
         bar.updatesValues();
     }

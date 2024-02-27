@@ -14,20 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package listening.linuxsuren.github.io.componet;
+package listening.linuxsuren.github.io.service;
 
-import listening.linuxsuren.github.io.service.Episode;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-public interface PlayEvent {
-    void play();
-
-    void play(Episode episode);
-
-    void stop();
-
-    boolean isPlaying();
-
-    void setTitleLabel(String titleLabel);
-
-    void seek(String timeLine);
+public interface ProfileService {
+    Profile getProfile() throws IOException;
+    void addQueue(ToDoEpisode episode);
+    void setCurrentEpisode(ToDoEpisode episode);
 }
