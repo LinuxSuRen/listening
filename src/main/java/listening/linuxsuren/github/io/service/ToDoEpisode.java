@@ -22,6 +22,23 @@ public class ToDoEpisode {
     private String audioURL;
     private double duration;
 
+    public static ToDoEpisode ofEpisode(Episode episode) {
+        ToDoEpisode todoEpisode = new ToDoEpisode();
+        todoEpisode.setPodcast(episode.getPodcast());
+        todoEpisode.setEpisode(episode.getTitle());
+        todoEpisode.setAudioURL(episode.getAudioURL());
+        todoEpisode.setDuration(episode.getDuration().toMillis());
+        return todoEpisode;
+    }
+
+    public Episode toEpisode() {
+        Episode episode = new Episode();
+        episode.setPodcast(this.getPodcast());
+        episode.setTitle(this.getEpisode());
+        episode.setAudioURL(this.getAudioURL());
+        return episode;
+    }
+
     public String getPodcast() {
         return podcast;
     }
@@ -52,5 +69,15 @@ public class ToDoEpisode {
 
     public void setAudioURL(String audioURL) {
         this.audioURL = audioURL;
+    }
+
+    @Override
+    public int hashCode() {
+        return audioURL.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 }

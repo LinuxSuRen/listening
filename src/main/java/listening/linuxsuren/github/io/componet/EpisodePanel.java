@@ -17,6 +17,8 @@ limitations under the License.
 package listening.linuxsuren.github.io.componet;
 
 import listening.linuxsuren.github.io.service.Episode;
+import listening.linuxsuren.github.io.service.LocalProfileService;
+import listening.linuxsuren.github.io.service.ToDoEpisode;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -56,21 +58,31 @@ public class EpisodePanel extends JPanel implements Background {
         JPanel panel = new JPanel();
 
         JButton playBut = new JButton("Play");
+        JButton laterBut = new JButton("Later");
         JButton showNotesBut = new JButton("ShowNotes");
         JButton rssBut = new JButton("RSS");
         playBut.setToolTipText(episode.getMediaType());
 
         panel.add(playBut);
+        panel.add(laterBut);
         panel.add(showNotesBut);
         panel.add(rssBut);
 
         playBut.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (playEvent != null) {
-                    playEvent.play(episode);
-                    playEvent.setTitleLabel(episode.getTitle());
-                }
+            if (playEvent != null) {
+                playEvent.play(episode);
+                playEvent.setTitleLabel(episode.getTitle());
+            }
+            }
+        });
+        laterBut.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ToDoEpisode todoEpisode = ToDoEpisode.ofEpisode(episode);
+                new LocalProfileService().addQueue(todoEpisode);
+                laterBut.setEnabled(false);
             }
         });
 
@@ -92,6 +104,10 @@ public class EpisodePanel extends JPanel implements Background {
                 editorPane.setContentType("text/xml");
             }
         });
+
+        // set status
+        ToDoEpisode todoEpisode = ToDoEpisode.ofEpisode(episode);
+        laterBut.setEnabled(!new LocalProfileService().hasItem(todoEpisode));
         return panel;
     }
 

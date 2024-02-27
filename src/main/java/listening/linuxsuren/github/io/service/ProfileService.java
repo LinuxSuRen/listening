@@ -16,11 +16,12 @@ limitations under the License.
 
 package listening.linuxsuren.github.io.service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public interface ProfileService {
     Profile getProfile() throws IOException;
     void addQueue(ToDoEpisode episode);
+    boolean hasItem(ToDoEpisode episode);
+    void removeItem(ToDoEpisode episode);
     void setCurrentEpisode(ToDoEpisode episode);
 }

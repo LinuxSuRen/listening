@@ -53,8 +53,35 @@ public class LocalProfileService implements ProfileService{
         if (profile.getEpisodes() == null) {
             profile.setEpisodes(new ArrayList<>());
         }
-        profile.getEpisodes().add(episode);
+        if (!profile.getEpisodes().contains(episode)) {
+            profile.getEpisodes().add(episode);
+        }
         write(profile);
+    }
+
+    @Override
+    public boolean hasItem(ToDoEpisode episode) {
+        Profile profile;
+        try {
+            profile = getProfile();
+        } catch (IOException e) {
+            return false;
+        }
+
+        if (profile.getEpisodes() != null) {
+            return profile.getEpisodes().contains(episode);
+        }
+        return false;
+    }
+
+    @Override
+    public void removeItem(ToDoEpisode episode) {
+        try {
+            Profile profile = getProfile();
+            profile.getEpisodes().remove(episode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

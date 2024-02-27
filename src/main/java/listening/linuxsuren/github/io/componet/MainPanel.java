@@ -34,7 +34,7 @@ public class MainPanel extends JPanel {
     private JFXPanel fxPanel = new JFXPanel();
     private Player player;
     private ExplorePanel explorePanel;
-    private CollectionService collectionService = new FakeCollectionService();
+    private CollectionService collectionService = new SimpleCollectionService();
 
     public MainPanel() {
         this.setLayout(new BorderLayout());
