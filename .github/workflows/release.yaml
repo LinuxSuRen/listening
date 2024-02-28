@@ -48,6 +48,9 @@ jobs:
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
       - name: Publish to GitHub Packages Apache Maven
-        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        run: |
+          mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+          mvn deploy -s $GITHUB_WORKSPACE/settings.xml -Djavafx.platform=mac
+          mvn deploy -s $GITHUB_WORKSPACE/settings.xml -Djavafx.platform=linux
         env:
           GITHUB_TOKEN: ${{ github.token }}

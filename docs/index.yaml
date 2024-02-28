@@ -14,3 +14,5 @@ items:
     rss: https://proxy.wavpub.com/pie.xml
   - name: freeCodeCamp 中文播客
     rss: https://feeds.transistor.fm/freecodecamp-podcast-in-chinese
+  - name: 编码人声
+    rss: https://feeds.daopub.com/bmrs.xml

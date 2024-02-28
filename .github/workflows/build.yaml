@@ -25,7 +25,10 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Build with Maven
-        run: mvn -B test jacoco:report package launch4j:launch4j --file pom.xml
+        run: |
+          mvn -B test jacoco:report package --file pom.xml
+          mvn -B test jacoco:report package --file pom.xml -Djavafx.platform=mac
+          mvn -B test jacoco:report package --file pom.xml -Djavafx.platform=linux
 
       - name: Upload Coverage
         env:
