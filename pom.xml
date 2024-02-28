@@ -16,7 +16,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <javafx.platform>windows</javafx.platform>
     </properties>
+
+    <inceptionYear>2024</inceptionYear>
 
     <build>
         <plugins>
@@ -85,7 +88,7 @@
                         </goals>
                         <configuration>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>full</shadedClassifierName>
+                            <shadedClassifierName>full-${javafx.platform}</shadedClassifierName>
                         </configuration>
                     </execution>
                 </executions>
@@ -116,7 +119,7 @@
                                     <opt>-Dfile.encoding=UTF-8</opt>
                                 </opts>
                                 <minVersion>1.20.0</minVersion>
-<!--                                <path>${java.home}</path>-->
+                                <path>${env.JAVA_HOME}</path>
                             </jre>
                             <versionInfo>
                                 <copyright>Apache 2.0</copyright>
