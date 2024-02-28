@@ -27,6 +27,7 @@ public class Episode {
     private String mediaType;
     private String htmlNote;
     private String rssURL;
+    private String link;
     private ZonedDateTime publishDate;
     private Duration duration;
 
@@ -94,6 +95,14 @@ public class Episode {
 
     public void setRssURL(String rssURL) {
         this.rssURL = rssURL;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public ZonedDateTime getPublishDate() {

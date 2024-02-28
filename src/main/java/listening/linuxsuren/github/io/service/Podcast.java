@@ -23,6 +23,7 @@ public class Podcast {
     private String name;
     private String rss;
     private String logoURL;
+    private String link;
     private List<String> categories = new ArrayList<>();
 
     public Podcast() {}
@@ -54,6 +55,14 @@ public class Podcast {
 
     public void setLogoURL(String logoURL) {
         this.logoURL = logoURL;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public List<String> getCategories() {

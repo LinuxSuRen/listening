@@ -106,6 +106,9 @@ public class SimpleCollectionService implements CollectionService {
             URL rssURL = new URL(podcast.getRss());
             Feed feed = new PodcastParser().parse(new InputStreamReader(rssURL.openStream()));
 
+            if (feed.getLinks() != null && !feed.getLinks().isEmpty()) {
+                podcast.setLink(feed.getLinks().stream().iterator().next().getHref());
+            }
             feed.getImages().stream().findFirst().ifPresent(image -> podcast.setLogoURL(image.getUrl()));
             feed.getCategories().forEach(category -> podcast.getCategories().add(category.getName()));
         } catch (MalformedURLException e) {
@@ -142,6 +145,9 @@ public class SimpleCollectionService implements CollectionService {
                     episode.setAudioURL(i.getEnclosure().getUrl());
                     episode.setLength(i.getEnclosure().getLength());
                     episode.setMediaType(i.getEnclosure().getType());
+                }
+                if (i.getLinks() != null && !i.getLinks().isEmpty()) {
+                    episode.setLink(i.getLinks().stream().iterator().next().getHref());
                 }
                 episodes.add(episode);
             });
