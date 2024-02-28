@@ -46,7 +46,7 @@ public class Player extends BorderPane implements PlayEvent {
         view = new MediaView(player);
         mpane = new Pane();
         titleLabel = new Label();
-        mpane.getChildren().add(view); // Calling the function getChildren
+        mpane.getChildren().add(view);
         player.setOnReady(() -> {
             player.setStopTime(player.getStopTime());
             bar.reset();
