@@ -14,3 +14,4 @@ See the screenshots from [here](https://github.com/LinuxSuRen/listening/discussi
 ## Similar Projects
 * https://github.com/Automattic/pocket-casts-android
 * https://github.com/Automattic/pocket-casts-ios
+* https://github.com/gpodder/gpodder
