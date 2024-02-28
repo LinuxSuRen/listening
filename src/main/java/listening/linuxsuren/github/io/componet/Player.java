@@ -158,11 +158,15 @@ public class Player extends BorderPane implements PlayEvent {
         public void run() {
             LocalProfileService service = new LocalProfileService();
             try {
-                service.removeItem(service.getProfile().getCurrentEpisode());
+                ToDoEpisode current = service.getProfile().getCurrentEpisode();
+                System.out.println(current.getEpisode() + " is finished.");
+                service.removeItem(current);
 
                 List<ToDoEpisode> todoList = service.getProfile().getEpisodes();
                 if (todoList != null && !todoList.isEmpty()) {
                     playEvent.play(todoList.get(0).toEpisode());
+                } else {
+                    service.setCurrentEpisode(null);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

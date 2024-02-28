@@ -57,10 +57,13 @@ public class MainPanel extends JPanel {
         episode.setAudioURL("https://fake");
         try {
             Profile profile = new LocalProfileService().getProfile();
-            episode.setAudioURL(CacheServer.wrap(profile.getCurrentEpisode().getAudioURL()));
-            lastDuration = profile.getCurrentEpisode().getDuration() + "ms";
-            episode.setTitle(profile.getCurrentEpisode().getEpisode());
-            episode.setPodcast(profile.getCurrentEpisode().getPodcast());
+            ToDoEpisode current = profile.getCurrentEpisode();
+            if (current != null) {
+                episode.setAudioURL(CacheServer.wrap(current.getAudioURL()));
+                lastDuration = current.getDuration() + "ms";
+                episode.setTitle(current.getEpisode());
+                episode.setPodcast(current.getPodcast());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

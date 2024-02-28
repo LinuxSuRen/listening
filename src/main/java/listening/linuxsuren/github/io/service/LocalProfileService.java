@@ -79,6 +79,7 @@ public class LocalProfileService implements ProfileService{
         try {
             Profile profile = getProfile();
             profile.getEpisodes().remove(episode);
+            write(profile);
         } catch (IOException e) {
             e.printStackTrace();
         }
