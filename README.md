@@ -10,3 +10,7 @@ See the screenshots from [here](https://github.com/LinuxSuRen/listening/discussi
 * Cache the audio file
 * Cache the logo
 * Add RSS
+
+## Similar Projects
+* https://github.com/Automattic/pocket-casts-android
+* https://github.com/Automattic/pocket-casts-ios
