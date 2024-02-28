@@ -186,12 +186,13 @@ public class CacheServer implements HttpHandler {
             return wrapURL(address);
         }
 
-        if (!address.contains("?")) {
-            address += "?";
+        String wrappedAddress = address;
+        if (!wrappedAddress.contains("?")) {
+            wrappedAddress += "?";
         } else {
-            address += "&";
+            wrappedAddress += "&";
         }
-        address += "cacheLive=" + live;
-        return wrapURL(address);
+        wrappedAddress += "cacheLive=" + live;
+        return wrapURL(wrappedAddress);
     }
 }
