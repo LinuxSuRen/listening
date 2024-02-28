@@ -48,6 +48,7 @@ public class CollectionCardPanel extends JPanel {
                 BufferedImage image = ImageIO.read(CacheServer.wrapURL(podcast.getLogoURL()));
 
                 JLabel label = new JLabel();
+                label.setMinimumSize(new Dimension(80, 80));
                 label.setIcon(new ImageIcon(image.getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
                 label.addMouseListener(mouseListener);
                 label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

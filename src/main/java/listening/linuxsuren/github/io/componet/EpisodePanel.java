@@ -26,9 +26,12 @@ import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class EpisodePanel extends JPanel implements Background {
     private final JEditorPane editorPane = new JEditorPane();
+    private final JTextField addressField = new JTextField();
     private PlayEvent playEvent;
 
     public EpisodePanel(Episode episode) {
@@ -47,11 +50,12 @@ public class EpisodePanel extends JPanel implements Background {
                 playEvent.seek(e.getDescription());
             }
         });
+        addressField.setText(episode.getRssURL());
 
         this.setLayout(new BorderLayout());
         this.add(createToolPanel(episode), BorderLayout.NORTH);
         this.add(new JScrollPane(editorPane), BorderLayout.CENTER);
-
+        this.add(addressField, BorderLayout.SOUTH);
     }
 
     private JPanel createToolPanel(Episode episode) {
@@ -61,12 +65,17 @@ public class EpisodePanel extends JPanel implements Background {
         JButton laterBut = new JButton("Later");
         JButton showNotesBut = new JButton("ShowNotes");
         JButton rssBut = new JButton("RSS");
+        JButton websiteBut = new JButton("Website");
+
+        // set buttons
         playBut.setToolTipText(episode.getMediaType());
+        websiteBut.setVisible(canOpen(episode));
 
         panel.add(playBut);
         panel.add(laterBut);
         panel.add(showNotesBut);
         panel.add(rssBut);
+        panel.add(websiteBut);
 
         playBut.addActionListener(new AbstractAction() {
             @Override
@@ -101,7 +110,21 @@ public class EpisodePanel extends JPanel implements Background {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                editorPane.setContentType("text/xml");
+                editorPane.setContentType("application/xml;charset=UTF-8");
+            }
+        });
+        websiteBut.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (websiteBut.isVisible()) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(episode.getLink()));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (URISyntaxException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
 
@@ -118,5 +141,12 @@ public class EpisodePanel extends JPanel implements Background {
     @Override
     public boolean isRunning() {
         return playEvent.isPlaying();
+    }
+
+    private boolean canOpen(Episode episode) {
+        return episode.getLink() != null &&
+                !episode.getLink().isEmpty() &&
+                Desktop.isDesktopSupported() &&
+                Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
     }
 }

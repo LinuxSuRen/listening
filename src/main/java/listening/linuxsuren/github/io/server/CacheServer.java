@@ -27,8 +27,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -74,6 +74,17 @@ public class CacheServer implements HttpHandler {
             throw new RuntimeException(ex);
         }
 
+        // check the cache living duration
+        Duration cacheLive = parseCacheLive(query);
+        if (cacheLive != null) {
+            Date expectedDate = new Date(cacheFile.lastModified() + cacheLive.toMillis());
+            if (expectedDate.before(new Date())) {
+                System.out.println("will delete the invalid cache: " + path);
+                // TODO should hava a smart way to let the caller know it
+                cacheFile.delete();
+            }
+        }
+
         boolean stillCache = cacheQueue.get(path) != null;
         if (!cacheFile.exists() || cacheFile.length() == 0 || stillCache) {
             if (!stillCache) {
@@ -90,6 +101,7 @@ public class CacheServer implements HttpHandler {
 
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(new URI(path))
+                        .header("User-Agent", "linuxsuren/listening")
                         .GET()
                         .build();
 
@@ -145,6 +157,19 @@ public class CacheServer implements HttpHandler {
         }
     }
 
+    public static Duration parseCacheLive(String query) {
+        if (query == null || query.isEmpty()) {
+            return null;
+        }
+
+        Optional<String> cacheLiveOpt = Arrays.stream(query.split("&")).filter(o -> o.startsWith("cacheLive=")).findFirst();
+        if (cacheLiveOpt.isPresent()) {
+            return Duration.parse(cacheLiveOpt.get().replace("cacheLive=", ""));
+        }
+
+        return null;
+    }
+
     public static String wrap(String address) {
         if (port == -1) {
             return address;
@@ -154,5 +179,19 @@ public class CacheServer implements HttpHandler {
 
     public static URL wrapURL(String address) throws MalformedURLException {
         return new URL(wrap(address));
+    }
+
+    public static URL wrapURLWithLive(String address, Duration live) throws MalformedURLException {
+        if (live == null) {
+            return wrapURL(address);
+        }
+
+        if (!address.contains("?")) {
+            address += "?";
+        } else {
+            address += "&";
+        }
+        address += "cacheLive=" + live;
+        return wrapURL(address);
     }
 }
