@@ -18,3 +18,9 @@ items:
     rss: https://feeds.daopub.com/bmrs.xml
   - name: AsyncTalk
     rss: https://www.ximalaya.com/album/53875103.xml
+  - name: ALC Beijing
+    rss: https://www.ximalaya.com/album/37853515.xml
+  - name: 大话开源
+    rss: https://feed.xyzfm.space/httyt3qcujpm
+  - name: 枫言枫语
+    rss: https://justinyan.me/feed/podcast
