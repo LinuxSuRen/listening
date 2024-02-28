@@ -20,8 +20,7 @@ import listening.linuxsuren.github.io.service.CollectionService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +29,24 @@ import java.util.List;
  */
 public class ExplorePanel extends JPanel {
     private List<PodcastEvent> podcastEventList = new ArrayList<>();
+    private CollectionService collectionService;
 
     public ExplorePanel() {
         this.setName("Explore");
 
         this.setLayout(new GridLayout(0, 3));
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                if (collectionService != null) {
+                    load(collectionService);
+                }
+            }
+        });
     }
 
     public void load(CollectionService collectionService) {
+        this.collectionService = collectionService;
         this.removeAll();
 
         collectionService.getAll().forEach((podcast) -> {

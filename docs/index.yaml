@@ -7,7 +7,7 @@ items:
   - name: 真相壁炉
     rss: https://www.ximalaya.com/album/75738459.xml
   - name: 历史剥壳
-    rss: http://www.ximalaya.com/album/24355721.xml
+    rss: https://www.ximalaya.com/album/24355721.xml
   - name: KubeSphere Talk
     rss: https://feed.xyzfm.space/nxmnjxgmu6r7
   - name: 后互联网时代的乱弹
@@ -16,3 +16,5 @@ items:
     rss: https://feeds.transistor.fm/freecodecamp-podcast-in-chinese
   - name: 编码人声
     rss: https://feeds.daopub.com/bmrs.xml
+  - name: AsyncTalk
+    rss: https://www.ximalaya.com/album/53875103.xml

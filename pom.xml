@@ -106,7 +106,7 @@
                             <headerType>gui</headerType>
                             <outfile>${project.build.directory}/listening-gui.exe</outfile>
 <!--                            <jar>${project.build.directory}/${artifactId}-${version}.jar</jar>-->
-                            <downloadUrl>http://java.com/download</downloadUrl>
+<!--                            <downloadUrl>http://java.com/download</downloadUrl>-->
                             <errTitle>TypingError</errTitle>
                             <classPath>
                                 <mainClass>listening.linuxsuren.github.io.Startup</mainClass>
@@ -118,7 +118,7 @@
                                 <opts>
                                     <opt>-Dfile.encoding=UTF-8</opt>
                                 </opts>
-                                <minVersion>1.20.0</minVersion>
+<!--                                <minVersion>1.20.0</minVersion>-->
                                 <path>${env.JAVA_HOME}</path>
                             </jre>
                             <versionInfo>

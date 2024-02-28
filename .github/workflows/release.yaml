@@ -31,13 +31,20 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Build with Maven
-        run: mvn -B test package launch4j:launch4j --file pom.xml
+        run: |
+          mvn -B test package --file pom.xml
+          mvn -B test package --file pom.xml -Djavafx.platform=mac
+          mvn -B test package --file pom.xml -Djavafx.platform=linux
 
       - name: Upload asset to release
         uses: csexton/release-asset-action@v3
         if: github.ref != 'refs/heads/master'
         with:
-          file: target/listening-gui.exe
+          files: |
+            target/listening-gui.exe
+            target/listening-0.0.1-SNAPSHOT-full-windows.jar
+            target/listening-0.0.1-SNAPSHOT-full-mac.jar
+            target/listening-0.0.1-SNAPSHOT-full-linux.jar
           github-token: ${{ secrets.GH_PUBLISH_SECRETS }}
 
       - name: Upload Coverage
@@ -50,7 +57,5 @@ jobs:
       - name: Publish to GitHub Packages Apache Maven
         run: |
           mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-          mvn deploy -s $GITHUB_WORKSPACE/settings.xml -Djavafx.platform=mac
-          mvn deploy -s $GITHUB_WORKSPACE/settings.xml -Djavafx.platform=linux
         env:
           GITHUB_TOKEN: ${{ github.token }}
