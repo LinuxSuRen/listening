@@ -24,6 +24,9 @@ import listening.linuxsuren.github.io.service.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This is the main panel which is the container of all others
@@ -32,6 +35,8 @@ public class MainPanel extends JPanel {
     private BreadCrumbPanel breadCrumbPanel;
     private CardLayout cardLayout = new CardLayout();
     private JFXPanel fxPanel = new JFXPanel();
+    private final JPopupMenu popupMenu;
+    private final JComponent rightPanel;
     private Player player;
     private ExplorePanel explorePanel;
     private CollectionService collectionService = new SimpleCollectionService();
@@ -40,6 +45,8 @@ public class MainPanel extends JPanel {
         this.setLayout(new BorderLayout());
 
         JPanel centerPanel = createCenterPanel();
+        rightPanel = createRightPanel();
+        popupMenu = createPopupMenu();
 
         breadCrumbPanel = new BreadCrumbPanel(centerPanel, cardLayout);
         breadCrumbPanel.append(explorePanel);
@@ -48,6 +55,7 @@ public class MainPanel extends JPanel {
 
         this.add(centerPanel, BorderLayout.CENTER);
         this.add(fxPanel, BorderLayout.NORTH);
+        this.add(rightPanel, BorderLayout.EAST);
         this.add(breadCrumbPanel, BorderLayout.SOUTH);
     }
     
@@ -98,7 +106,81 @@ public class MainPanel extends JPanel {
             scrollPane.setName(e.getName());
             breadCrumbPanel.append(scrollPane);
         });
+        explorePanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
 
         return centerPanel;
+    }
+
+    private JComponent createRightPanel() {
+        JPanel panel = new JPanel();
+
+        JList<ToDoEpisode> toDoEpisodeJList = new JList<>();
+        toDoEpisodeJList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            JLabel label = new JLabel(value.getEpisode());
+            label.setToolTipText(value.getPodcast());
+            return label;
+        });
+        toDoEpisodeJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panel.add(toDoEpisodeJList);
+
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVisible(false);
+        scrollPane.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                try {
+                    Profile profile = new LocalProfileService().getProfile();
+
+                    toDoEpisodeJList.setListData(profile.getEpisodes().toArray(new ToDoEpisode[0]));
+                    scrollPane.getParent().revalidate();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        return scrollPane;
+    }
+
+    private JPopupMenu createPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JCheckBoxMenuItem laterMenu = new JCheckBoxMenuItem("Later");
+        JMenuItem reloadMenu = new JMenuItem("Reload");
+        JMenuItem openConfigMenu = new JMenuItem("Open Config");
+        laterMenu.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rightPanel.setVisible(laterMenu.isSelected());
+                rightPanel.getParent().revalidate();
+            }
+        });
+        reloadMenu.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                explorePanel.reload();
+            }
+        });
+        openConfigMenu.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().open(new File(System.getProperty("user.home"), ".config/listening"));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        popupMenu.add(laterMenu);
+        popupMenu.add(reloadMenu);
+        popupMenu.add(openConfigMenu);
+        return popupMenu;
     }
 }

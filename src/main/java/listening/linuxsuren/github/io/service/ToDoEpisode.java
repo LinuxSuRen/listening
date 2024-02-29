@@ -27,7 +27,9 @@ public class ToDoEpisode {
         todoEpisode.setPodcast(episode.getPodcast());
         todoEpisode.setEpisode(episode.getTitle());
         todoEpisode.setAudioURL(episode.getAudioURL());
-        todoEpisode.setDuration(episode.getDuration().toMillis());
+        if (episode.getDuration() != null) {
+            todoEpisode.setDuration(episode.getDuration().toMillis());
+        }
         return todoEpisode;
     }
 
@@ -73,11 +75,17 @@ public class ToDoEpisode {
 
     @Override
     public int hashCode() {
+        if (audioURL == null) {
+            return 0;
+        }
         return audioURL.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
         return hashCode() == obj.hashCode();
     }
 }
