@@ -100,6 +100,7 @@ public class Player extends BorderPane implements PlayEvent {
             new LocalProfileService().setCurrentEpisode(todoEpisode);
         });
         player.setOnEndOfMedia(new playNext(this));
+        titleLabel.setText(episode.getTitle());
         view.setMediaPlayer(player);
         player.play();
         this.setVisible(true);
@@ -164,7 +165,9 @@ public class Player extends BorderPane implements PlayEvent {
 
                 List<ToDoEpisode> todoList = service.getProfile().getEpisodes();
                 if (todoList != null && !todoList.isEmpty()) {
-                    playEvent.play(todoList.get(0).toEpisode());
+                    Episode next = todoList.get(0).toEpisode();
+                    service.setCurrentEpisode(ToDoEpisode.ofEpisode(next));
+                    playEvent.play(next);
                 } else {
                     service.setCurrentEpisode(null);
                 }

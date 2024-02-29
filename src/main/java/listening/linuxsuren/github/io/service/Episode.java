@@ -120,4 +120,20 @@ public class Episode {
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
+
+    @Override
+    public int hashCode() {
+        if (audioURL == null) {
+            return 0;
+        }
+        return audioURL.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return hashCode() == obj.hashCode();
+    }
 }

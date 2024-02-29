@@ -30,6 +30,10 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import listening.linuxsuren.github.io.service.LocalProfileService;
+import listening.linuxsuren.github.io.service.Profile;
+
+import java.io.IOException;
 
 public class MediaBar extends HBox {
     private Slider time = new Slider();
@@ -50,6 +54,14 @@ public class MediaBar extends HBox {
         vol.setValue(100);
         HBox.setHgrow(time, Priority.ALWAYS);
         playButton.setPrefWidth(30);
+
+        vol.valueProperty().addListener((o, oldNum, newNum) -> new LocalProfileService().setVolume(newNum.intValue()));
+        try {
+            Profile profile = new LocalProfileService().getProfile();
+            vol.setValue(profile.getVolume());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         getChildren().add(playButton);
         getChildren().add(time);

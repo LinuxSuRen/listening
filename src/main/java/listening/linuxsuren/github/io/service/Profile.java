@@ -19,8 +19,17 @@ package listening.linuxsuren.github.io.service;
 import java.util.List;
 
 public class Profile {
+    private int volume;
     private ToDoEpisode currentEpisode;
     private List<ToDoEpisode> episodes;
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
 
     public ToDoEpisode getCurrentEpisode() {
         return currentEpisode;

@@ -98,6 +98,25 @@ public class LocalProfileService implements ProfileService{
         write(profile);
     }
 
+    @Override
+    public void setVolume(int volume) {
+        Profile profile = null;
+        try {
+            profile = getProfile();
+        } catch (IOException e) {
+            profile = new Profile();
+        }
+
+        int validVolume = volume;
+        if (validVolume < 0) {
+            validVolume = 0;
+        } else if (validVolume > 100) {
+            validVolume = 100;
+        }
+        profile.setVolume(validVolume);
+        write(profile);
+    }
+
     private void write(Profile profile) {
         Yaml yaml = new Yaml();
         String data = yaml.dumpAs(profile, Tag.MAP, null);

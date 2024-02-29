@@ -22,6 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,26 +39,37 @@ public class ExplorePanel extends JPanel {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                if (collectionService != null) {
-                    load(collectionService);
-                }
+                reload();
             }
         });
     }
 
+    public void reload() {
+        if (collectionService != null) {
+            load(collectionService);
+        }
+    }
+
     public void load(CollectionService collectionService) {
         this.collectionService = collectionService;
-        this.removeAll();
 
         collectionService.getAll().forEach((podcast) -> {
+            boolean exists = Arrays.stream(getComponents()).anyMatch((c) -> c.getName().equals(podcast.getName()));
+            if (exists) {
+                return;
+            }
+
             CollectionCardPanel panel = new CollectionCardPanel(podcast);
+            panel.setName(podcast.getName());
             panel.asyncLoad(collectionService);
             panel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    podcastEventList.forEach((p) -> {
-                        p.trigger(podcast);
-                    });
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        podcastEventList.forEach((p) -> {
+                            p.trigger(podcast);
+                        });
+                    }
                 }
             });
             add(panel);

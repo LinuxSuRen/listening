@@ -24,4 +24,5 @@ public interface ProfileService {
     boolean hasItem(ToDoEpisode episode);
     void removeItem(ToDoEpisode episode);
     void setCurrentEpisode(ToDoEpisode episode);
+    void setVolume(int volume);
 }
