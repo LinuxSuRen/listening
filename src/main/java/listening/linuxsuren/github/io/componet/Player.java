@@ -47,10 +47,6 @@ public class Player extends BorderPane implements PlayEvent {
         mpane = new Pane();
         titleLabel = new Label();
         mpane.getChildren().add(view);
-        player.setOnReady(() -> {
-            player.setStopTime(player.getStopTime());
-            bar.reset();
-        });
         player.currentTimeProperty().addListener(ov -> {
             ToDoEpisode todoEpisode = new ToDoEpisode();
             todoEpisode.setPodcast(episode.getPodcast());
@@ -65,6 +61,10 @@ public class Player extends BorderPane implements PlayEvent {
         setCenter(mpane);
         bar = new MediaBar(player);
         bar.setPlayer(player);
+        player.setOnReady(() -> {
+            player.setStopTime(player.getStopTime());
+            bar.reset();
+        });
         setBottom(bar);
         setTop(titleLabel);
         setStyle("-fx-background-color:#bfc2c7");
