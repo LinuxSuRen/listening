@@ -22,6 +22,7 @@ public class Profile {
     private int volume;
     private ToDoEpisode currentEpisode;
     private List<ToDoEpisode> episodes;
+    private List<Podcast> personalPodcasts;
 
     public int getVolume() {
         return volume;
@@ -45,5 +46,13 @@ public class Profile {
 
     public void setEpisodes(List<ToDoEpisode> episodes) {
         this.episodes = episodes;
+    }
+
+    public List<Podcast> getPersonalPodcasts() {
+        return personalPodcasts;
+    }
+
+    public void setPersonalPodcasts(List<Podcast> personalPodcasts) {
+        this.personalPodcasts = personalPodcasts;
     }
 }

@@ -39,9 +39,10 @@ public class MainPanel extends JPanel {
     private final JComponent rightPanel;
     private Player player;
     private ExplorePanel explorePanel;
+    private final AddPodcastDialog addPodcastDialog;
     private CollectionService collectionService = new SimpleCollectionService();
 
-    public MainPanel() {
+    public MainPanel(JFrame frame) {
         this.setLayout(new BorderLayout());
 
         JPanel centerPanel = createCenterPanel();
@@ -50,6 +51,8 @@ public class MainPanel extends JPanel {
 
         breadCrumbPanel = new BreadCrumbPanel(centerPanel, cardLayout);
         breadCrumbPanel.append(explorePanel);
+
+        addPodcastDialog = new AddPodcastDialog(frame);
 
         Platform.runLater(this::addPlayer);
 
@@ -154,6 +157,7 @@ public class MainPanel extends JPanel {
         JCheckBoxMenuItem laterMenu = new JCheckBoxMenuItem("Later");
         JMenuItem reloadMenu = new JMenuItem("Reload");
         JMenuItem openConfigMenu = new JMenuItem("Open Config");
+        JMenuItem addRssMenu = new JMenuItem("Add RSS");
         laterMenu.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -177,10 +181,17 @@ public class MainPanel extends JPanel {
                 }
             }
         });
+        addRssMenu.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addPodcastDialog.setVisible(true);
+            }
+        });
 
         popupMenu.add(laterMenu);
         popupMenu.add(reloadMenu);
         popupMenu.add(openConfigMenu);
+        popupMenu.add(addRssMenu);
         return popupMenu;
     }
 }

@@ -25,4 +25,5 @@ public interface ProfileService {
     void removeItem(ToDoEpisode episode);
     void setCurrentEpisode(ToDoEpisode episode);
     void setVolume(int volume);
+    void addPersonalRSS(Podcast podcast);
 }
