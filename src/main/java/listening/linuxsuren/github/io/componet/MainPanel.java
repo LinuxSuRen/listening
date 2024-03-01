@@ -49,8 +49,10 @@ public class MainPanel extends JPanel {
         rightPanel = createRightPanel();
         popupMenu = createPopupMenu();
 
+        JScrollPane exploreScrollPane = new JScrollPane(explorePanel);
+        exploreScrollPane.setName(explorePanel.getName());
         breadCrumbPanel = new BreadCrumbPanel(centerPanel, cardLayout);
-        breadCrumbPanel.append(explorePanel);
+        breadCrumbPanel.append(exploreScrollPane);
 
         addPodcastDialog = new AddPodcastDialog(frame);
 
@@ -95,6 +97,7 @@ public class MainPanel extends JPanel {
         centerPanel.setLayout(cardLayout);
 
         explorePanel = new ExplorePanel();
+        BorderUtil.setInsideBorder(explorePanel, 10);
         explorePanel.load(collectionService);
         explorePanel.addEvent((e) -> {
             CollectionPanel panel = new CollectionPanel(collectionService);

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" 
+  codebase="https://github.com/LinuxSuRen/listening/releases/download/">
+    <information>
+        <title>Listening</title>
+        <vendor>LinuxSuRen</vendor>
+        <homepage href="https://linuxsuren.github.io/listening/" />
+        <description>Open Source Podcasts client</description>
+    </information>
+    <security>
+        <all-permissions />
+    </security>
+    <resources>
+        <j2se version="1.2+"/>
+        <jar href="v0.0.3/listening-0.0.1-SNAPSHOT-full-mac.jar" main="true" />
+    </resources>
+    <application-desc/>
+</jnlp>

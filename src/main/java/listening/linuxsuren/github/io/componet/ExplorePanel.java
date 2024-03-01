@@ -39,7 +39,7 @@ public class ExplorePanel extends JPanel {
     public ExplorePanel() {
         this.setName("Explore");
 
-        this.setLayout(new GridLayout(0, 3));
+        this.setLayout(new GridLayout(0, 3, 10, 10));
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
@@ -62,7 +62,9 @@ public class ExplorePanel extends JPanel {
         try {
             Profile profile = new LocalProfileService().getProfile();
             List<Podcast> personalPodcasts = profile.getPersonalPodcasts();
-            allPodcasts.addAll(personalPodcasts);
+            if (personalPodcasts != null && !personalPodcasts.isEmpty()) {
+                allPodcasts.addAll(personalPodcasts);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
