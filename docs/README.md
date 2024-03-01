@@ -8,7 +8,7 @@ Please feel free to download it from https://github.com/LinuxSuRen/listening/rel
 
 We're using Install4j to create installer.
 
-<a href="/https://www.ej-technologies.com/products/install4j/overview.html" target="_blank">
+<a href="https://www.ej-technologies.com/products/install4j/overview.html" target="_blank">
     <img class="image-margin" width="92" height="26"
         src="https://www.ej-technologies.com/images/product_banners/install4j_small.png">
 </a>
