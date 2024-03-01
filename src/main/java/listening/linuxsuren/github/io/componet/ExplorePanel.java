@@ -17,10 +17,14 @@ limitations under the License.
 package listening.linuxsuren.github.io.componet;
 
 import listening.linuxsuren.github.io.service.CollectionService;
+import listening.linuxsuren.github.io.service.LocalProfileService;
+import listening.linuxsuren.github.io.service.Podcast;
+import listening.linuxsuren.github.io.service.Profile;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +57,17 @@ public class ExplorePanel extends JPanel {
     public void load(CollectionService collectionService) {
         this.collectionService = collectionService;
 
-        collectionService.getAll().forEach((podcast) -> {
+        List<Podcast> allPodcasts = collectionService.getAll();
+
+        try {
+            Profile profile = new LocalProfileService().getProfile();
+            List<Podcast> personalPodcasts = profile.getPersonalPodcasts();
+            allPodcasts.addAll(personalPodcasts);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        allPodcasts.stream().distinct().forEach((podcast) -> {
             boolean exists = Arrays.stream(getComponents()).anyMatch((c) -> c.getName().equals(podcast.getName()));
             if (exists) {
                 return;

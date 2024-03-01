@@ -33,6 +33,10 @@ public class Podcast {
         this.rss = rss;
     }
 
+    public boolean isValid() {
+        return name != null && !name.isEmpty() && rss != null && !rss.isEmpty();
+    }
+
     public String getName() {
         return name;
     }
@@ -71,5 +75,25 @@ public class Podcast {
 
     public void setCategories(List<String> categories) {
         this.categories = categories;
+    }
+
+    @Override
+    public int hashCode() {
+        int code = 0;
+        if (name != null ) {
+            code += name.hashCode();
+        }
+        if (rss != null) {
+            code += rss.hashCode();
+        }
+        return code;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return hashCode() == obj.hashCode();
     }
 }

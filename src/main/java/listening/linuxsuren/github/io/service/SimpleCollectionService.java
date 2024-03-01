@@ -106,6 +106,7 @@ public class SimpleCollectionService implements CollectionService {
             URL rssURL = new URL(podcast.getRss());
             Feed feed = new PodcastParser().parse(new InputStreamReader(rssURL.openStream()));
 
+            podcast.setName(feed.getTitle());
             if (feed.getLinks() != null && !feed.getLinks().isEmpty()) {
                 podcast.setLink(feed.getLinks().stream().iterator().next().getHref());
             }

@@ -27,7 +27,7 @@ public class Startup {
         JFrame frame = new JFrame("Listening");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.getContentPane().add(new MainPanel());
+        frame.getContentPane().add(new MainPanel(frame));
         System.setProperty("file.encoding", "UTF-8");
 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

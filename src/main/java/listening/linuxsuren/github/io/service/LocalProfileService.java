@@ -117,6 +117,29 @@ public class LocalProfileService implements ProfileService{
         write(profile);
     }
 
+    @Override
+    public void addPersonalRSS(Podcast podcast) {
+        if (podcast == null || !podcast.isValid()) {
+            return;
+        }
+
+        Profile profile = null;
+        try {
+            profile = getProfile();
+        } catch (IOException e) {
+            profile = new Profile();
+        }
+
+        if (profile.getPersonalPodcasts() == null) {
+            profile.setPersonalPodcasts(new ArrayList<>());
+        }
+
+        if (!profile.getPersonalPodcasts().contains(podcast)) {
+            profile.getPersonalPodcasts().add(podcast);
+            write(profile);
+        }
+    }
+
     private void write(Profile profile) {
         Yaml yaml = new Yaml();
         String data = yaml.dumpAs(profile, Tag.MAP, null);
