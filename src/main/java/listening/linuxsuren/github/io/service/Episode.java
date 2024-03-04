@@ -21,6 +21,7 @@ import java.time.ZonedDateTime;
 
 public class Episode {
     private String podcast;
+    private int number;
     private String title;
     private String audioURL;
     private long length;
@@ -43,6 +44,14 @@ public class Episode {
 
     public void setPodcast(String podcast) {
         this.podcast = podcast;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public String getTitle() {
