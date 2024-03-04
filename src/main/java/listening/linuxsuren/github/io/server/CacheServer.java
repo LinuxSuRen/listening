@@ -36,9 +36,9 @@ public class CacheServer implements HttpHandler {
     private static int port = -1;
     private Map<String, String> cacheQueue = new HashMap<>();
 
-    public void start(int port) throws IOException {
+    public void start(int port, String bind) throws IOException {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
+        InetSocketAddress address = new InetSocketAddress(bind, port);
         HttpServer server = HttpServer.create(address, 0);
         server.setExecutor(threadPoolExecutor);
         server.createContext("/", this);
@@ -48,7 +48,7 @@ public class CacheServer implements HttpHandler {
     }
 
     public void start() throws IOException {
-        start(0);
+        start(0, "127.0.0.1");
     }
 
     private String getCacheDir() {

@@ -31,12 +31,15 @@ public class CacheServerCLI {
         // create the Options
         Options options = new Options();
         options.addOption("p", "port", true, "The cache server port");
+        options.addOption("", "bind", true, "The server bind address");
 
         int port = 0;
+        String bind = null;
         try {
             // parse the command line arguments
             CommandLine line = parser.parse(options, args);
 
+            bind = line.getOptionValue("bind", "0.0.0.0");
             String portStr = line.getOptionValue("port", "" + defaultPort);
 
             port = Integer.parseInt(portStr);
@@ -48,7 +51,7 @@ public class CacheServerCLI {
         }
 
         try {
-            new CacheServer().start(port);
+            new CacheServer().start(port, bind);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
