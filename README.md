@@ -7,10 +7,9 @@ Podcast client written by Java
 
 See the screenshots from [here](https://github.com/LinuxSuRen/listening/discussions/1).
 
-## TODO
-* Cache the audio file
-* Cache the logo
-* Add RSS
+## Features
+* Cache
+* Add personal RSS address
 
 ## Similar Projects
 * https://github.com/Automattic/pocket-casts-android

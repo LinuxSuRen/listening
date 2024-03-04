@@ -36,16 +36,19 @@ public class CacheServer implements HttpHandler {
     private static int port = -1;
     private Map<String, String> cacheQueue = new HashMap<>();
 
-
-    public void start() throws IOException {
+    public void start(int port) throws IOException {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
-        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 0);
+        InetSocketAddress address = new InetSocketAddress("127.0.0.1", port);
         HttpServer server = HttpServer.create(address, 0);
         server.setExecutor(threadPoolExecutor);
         server.createContext("/", this);
         server.start();
-        port = server.getAddress().getPort();
+        port = server.getAddress().getPort(); // it can return the real port if the input parameter is 0
         System.out.println("started cache server with port: " + port);
+    }
+
+    public void start() throws IOException {
+        start(0);
     }
 
     private String getCacheDir() {
