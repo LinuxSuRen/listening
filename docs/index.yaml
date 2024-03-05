@@ -26,3 +26,5 @@ items:
     rss: https://justinyan.me/feed/podcast
   - name: 明朝那些事
     rss: https://feed.firstory.me/rss/user/ckw4zzlbkwa1c0922wfknc2qa
+  - name: 架构三人行
+    rss: https://proxy.wavpub.com/meaframework.xml
