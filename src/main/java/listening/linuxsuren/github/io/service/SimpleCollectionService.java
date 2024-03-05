@@ -36,7 +36,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleCollectionService implements CollectionService {
     private PodcastIndex index = null;
@@ -134,9 +136,11 @@ public class SimpleCollectionService implements CollectionService {
             URL rssURL = new URL(rssAddress);
             Feed feed = new PodcastParser().parse(new InputStreamReader(rssURL.openStream()));
 
+            AtomicInteger index = new AtomicInteger();
             feed.getItems().forEach((i) -> {
                 Episode episode = new Episode();
                 episode.setPodcast(feed.getTitle());
+                episode.setNumber(index.getAndIncrement());
                 episode.setTitle(i.getTitle().getText());
                 episode.setHtmlNote(i.getDescription().getText());
                 episode.setRssURL(rssAddress);

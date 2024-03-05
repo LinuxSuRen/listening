@@ -16,74 +16,142 @@ limitations under the License.
 
 package listening.linuxsuren.github.io.componet;
 
-import listening.linuxsuren.github.io.service.Episode;
-import listening.linuxsuren.github.io.service.LocalProfileService;
-import listening.linuxsuren.github.io.service.ToDoEpisode;
+import listening.linuxsuren.github.io.service.*;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 public class EpisodePanel extends JPanel implements Background {
     private final JEditorPane editorPane = new JEditorPane();
     private final JTextField addressField = new JTextField();
+    private JPanel toolPanel;
+    private Episode episode;
     private PlayEvent playEvent;
 
     public EpisodePanel(Episode episode) {
-        this.setName(episode.getTitle());
+        this.episode = episode;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        editorPane.setContentType("text/html");
-        editorPane.setText(episode.getHtmlNote());
+        JPopupMenu editorPopupMenu = createEditorPopupMenu();
         editorPane.setEditable(false);
-        editorPane.addHyperlinkListener(new HyperlinkListener() {
+        BorderUtil.setInsideBorder(editorPane, 8);
+        editorPane.addHyperlinkListener((e) -> {
+            if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+                return;
+            }
+            playEvent.seek(e.getDescription());
+        });
+        editorPane.addMouseListener(new MouseAdapter() {
             @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
-                    return;
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    editorPopupMenu.show(editorPane, e.getX(), e.getY());
                 }
-                playEvent.seek(e.getDescription());
             }
         });
-        addressField.setText(episode.getRssURL());
+
+        this.toolPanel = createToolPanel();
 
         this.setLayout(new BorderLayout());
-        this.add(createToolPanel(episode), BorderLayout.NORTH);
+        this.add(toolPanel, BorderLayout.NORTH);
         this.add(new JScrollPane(editorPane), BorderLayout.CENTER);
         this.add(addressField, BorderLayout.SOUTH);
+
+        load();
     }
 
-    private JPanel createToolPanel(Episode episode) {
-        JPanel panel = new JPanel();
+    private final DataButton<Episode> previousBut = new DataButton<>("Previous");
+    private final DataButton<Episode> nextBut = new DataButton<>("Next");
+    private final JButton laterBut = new JButton("Later");
+    private final JLabel titleLabel = new JLabel();
+
+    private void load() {
+        this.setName(episode.getTitle());
+        editorPane.setContentType("text/html");
+        editorPane.setText(episode.getHtmlNote());
+        editorPane.getCaret().setDot(0);
+        addressField.setText(episode.getRssURL());
+        titleLabel.setText(episode.getPodcast() + " - " + episode.getTitle());
+
+        // set status
+        ToDoEpisode todoEpisode = ToDoEpisode.ofEpisode(episode);
+        laterBut.setEnabled(!new LocalProfileService().hasItem(todoEpisode));
+
+        // read the next or previous episode
+        new Thread(() -> {
+            List<Episode> episodes = new SimpleCollectionService().getEpisode(
+                    new Podcast("", episode.getRssURL()));
+            final int currentIndex = episode.getNumber();
+            if (currentIndex < episodes.size()) {
+                nextBut.setVisible(true);
+                nextBut.setData(episodes.get(currentIndex + 1));
+            }
+            if (currentIndex > 0) {
+                previousBut.setVisible(true);
+                previousBut.setData(episodes.get(currentIndex - 1));
+            }
+        }).start();
+    }
+
+    private JPanel createToolPanel() {
+        JPanel buttonPanel = new JPanel();
 
         JButton playBut = new JButton("Play");
-        JButton laterBut = new JButton("Later");
         JButton showNotesBut = new JButton("ShowNotes");
         JButton rssBut = new JButton("RSS");
         JButton websiteBut = new JButton("Website");
 
         // set buttons
+        previousBut.setVisible(false);
+        nextBut.setVisible(false);
         playBut.setToolTipText(episode.getMediaType());
         websiteBut.setVisible(canOpen(episode));
 
-        panel.add(playBut);
-        panel.add(laterBut);
-        panel.add(showNotesBut);
-        panel.add(rssBut);
-        panel.add(websiteBut);
+        buttonPanel.add(previousBut);
+        buttonPanel.add(playBut);
+        buttonPanel.add(laterBut);
+        buttonPanel.add(showNotesBut);
+        buttonPanel.add(rssBut);
+        buttonPanel.add(websiteBut);
+        buttonPanel.add(nextBut);
 
+        previousBut.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Episode previousEpisode = previousBut.getData();
+                if (previousEpisode != null) {
+                    episode = previousEpisode;
+                    load();
+                }
+            }
+        });
+        nextBut.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Episode nextEpisode = nextBut.getData();
+                if (nextEpisode != null) {
+                    episode = nextEpisode;
+                    load();
+                }
+            }
+        });
         playBut.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            if (playEvent != null) {
-                playEvent.play(episode);
-                playEvent.setTitleLabel(episode.getTitle());
-            }
+                if (playEvent != null) {
+                    playEvent.play(episode);
+                    playEvent.setTitleLabel(episode.getTitle());
+                }
             }
         });
         laterBut.addActionListener(new AbstractAction() {
@@ -128,9 +196,9 @@ public class EpisodePanel extends JPanel implements Background {
             }
         });
 
-        // set status
-        ToDoEpisode todoEpisode = ToDoEpisode.ofEpisode(episode);
-        laterBut.setEnabled(!new LocalProfileService().hasItem(todoEpisode));
+        JPanel panel = new JPanel();
+        panel.add(titleLabel, BorderLayout.WEST);
+        panel.add(buttonPanel, BorderLayout.CENTER);
         return panel;
     }
 
@@ -148,5 +216,28 @@ public class EpisodePanel extends JPanel implements Background {
                 !episode.getLink().isEmpty() &&
                 Desktop.isDesktopSupported() &&
                 Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
+    }
+
+    private JPopupMenu createEditorPopupMenu() {
+        JPopupMenu menu = new JPopupMenu();
+
+        JMenuItem reloadItem = new JMenuItem("Reload");
+        reloadItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (editorPane.getPage() == null) {
+                    return;
+                }
+
+                try {
+                    editorPane.setPage(editorPane.getPage());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        menu.add(reloadItem);
+        return menu;
     }
 }
