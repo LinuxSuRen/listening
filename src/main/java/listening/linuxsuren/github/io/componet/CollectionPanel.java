@@ -20,16 +20,15 @@ import listening.linuxsuren.github.io.filter.EpisodeFilter;
 import listening.linuxsuren.github.io.filter.EpisodeNonFilter;
 import listening.linuxsuren.github.io.filter.EpisodeTitleFilter;
 import listening.linuxsuren.github.io.service.CollectionService;
+import listening.linuxsuren.github.io.service.Episode;
 import listening.linuxsuren.github.io.service.Podcast;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -39,6 +38,8 @@ public class CollectionPanel extends JPanel {
     private CollectionService collectionService;
     private Podcast podcast;
     private JPanel episodeListPanel = new JPanel();
+    private final JComboBox<Integer> yearBox = new JComboBox<>();
+    private final JTextField searchField = new JTextField(15);;
     private List<EpisodeEvent> eventList = new ArrayList<>();
 
     public CollectionPanel(CollectionService collectionService) {
@@ -55,33 +56,78 @@ public class CollectionPanel extends JPanel {
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         JLabel searchLabel = new JLabel("Search: ");
-        JTextField searchField = new JTextField(15);
         searchField.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadPodcast(podcast, new EpisodeTitleFilter(e.getActionCommand()));
+                loadPodcast(podcast);
             }
         });
 
+        JComboBox<String> orderBox = new JComboBox<>();
+        orderBox.addItem("Descend");
+        orderBox.addItem("Ascend");
+        orderBox.addItemListener((ItemEvent e) -> {
+            if (e.getItem().toString().equalsIgnoreCase("descend")) {
+                episodeComparator = descendOrder;
+            } else {
+                episodeComparator = ascendOrder;
+            }
+            loadPodcast(null);
+        });
+        yearBox.addItemListener((e) -> {
+            loadPodcast(null);
+        });
+
+        panel.add(new JLabel("Year:"));
+        panel.add(yearBox);
+        panel.add(orderBox);
         panel.add(searchLabel);
         panel.add(searchField);
         return panel;
     }
 
+    private final Comparator<Episode> ascendOrder = Comparator.comparing(Episode::getPublishDate);
+    private final Comparator<Episode> descendOrder = (Episode o1, Episode o2) -> o2.getPublishDate().compareTo(o1.getPublishDate());
+    private Comparator<Episode> episodeComparator = descendOrder;
+
     public void loadPodcast(Podcast podcast) {
-        loadPodcast(podcast, new EpisodeNonFilter());
+        Podcast pc = podcast;
+        if (pc == null) {
+            pc = this.podcast;
+        }
+        loadPodcast(pc, new EpisodeTitleFilter(searchField.getText()));
     }
 
     public void loadPodcast(Podcast podcast, final EpisodeFilter filter) {
-        this.podcast = podcast;
+        if (podcast == null && this.podcast == null) {
+            return;
+        }
+
+        Podcast pc;
+        if (podcast != null) {
+            this.podcast = podcast;
+            pc = podcast;
+        } else {
+            pc = this.podcast;
+        }
         episodeListPanel.removeAll();
 
         new Thread(() -> {
-            collectionService.getEpisode(podcast).forEach((i) -> {
+            Map<Integer, String> allYears = new HashMap<>();
+            final Object year = yearBox.getSelectedItem();
+
+            collectionService.getEpisode(pc).stream().sorted(episodeComparator).forEach((i) -> {
                 if (!filter.match(i)) {
                     return;
                 }
 
+                if (year instanceof Integer) {
+                    if (i.getPublishDate().getYear() != (Integer) year) {
+                        return;
+                    }
+                }
+
+                allYears.put(i.getPublishDate().getYear(), null);
                 JLabel label = new JLabel(i.getTitle());
                 label.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 label.addMouseListener(new MouseAdapter() {
@@ -102,6 +148,11 @@ public class CollectionPanel extends JPanel {
                 repaint();
                 revalidate();
             });
+
+            if (yearBox.getItemCount() == 0) {
+                yearBox.addItem(null);
+                allYears.keySet().forEach(yearBox::addItem);
+            }
         }).start();
     }
 

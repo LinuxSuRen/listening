@@ -16,6 +16,7 @@ limitations under the License.
 
 package listening.linuxsuren.github.io.service;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Podcast {
     private String rss;
     private String logoURL;
     private String link;
+    private ZonedDateTime publishDate;
     private List<String> categories = new ArrayList<>();
 
     public Podcast() {}
@@ -67,6 +69,14 @@ public class Podcast {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public ZonedDateTime getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(ZonedDateTime publishDate) {
+        this.publishDate = publishDate;
     }
 
     public List<String> getCategories() {
