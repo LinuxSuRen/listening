@@ -36,7 +36,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -108,6 +107,9 @@ public class SimpleCollectionService implements CollectionService {
             URL rssURL = new URL(podcast.getRss());
             Feed feed = new PodcastParser().parse(new InputStreamReader(rssURL.openStream()));
 
+            if (feed.getItems() != null && !feed.getItems().isEmpty()) {
+                podcast.setPublishDate(feed.getItems().get(0).getPubDate());
+            }
             podcast.setName(feed.getTitle());
             if (feed.getLinks() != null && !feed.getLinks().isEmpty()) {
                 podcast.setLink(feed.getLinks().stream().iterator().next().getHref());

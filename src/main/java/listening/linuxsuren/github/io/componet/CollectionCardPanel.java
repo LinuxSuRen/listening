@@ -37,6 +37,7 @@ public class CollectionCardPanel extends JPanel {
         this.podcast = podcast;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        this.setName(podcast.getName());
         this.add(new JLabel(podcast.getName()));
     }
 

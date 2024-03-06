@@ -98,7 +98,9 @@ public class MainPanel extends JPanel {
 
         explorePanel = new ExplorePanel();
         BorderUtil.setInsideBorder(explorePanel, 10);
-        explorePanel.load(collectionService);
+        new Thread(() -> {
+            explorePanel.load(collectionService);
+        }).start();
         explorePanel.addEvent((e) -> {
             CollectionPanel panel = new CollectionPanel(collectionService);
             panel.loadPodcast(e);

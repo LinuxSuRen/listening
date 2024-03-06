@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Represents a panel for exploring Podcasts
@@ -35,6 +36,7 @@ import java.util.List;
 public class ExplorePanel extends JPanel {
     private List<PodcastEvent> podcastEventList = new ArrayList<>();
     private CollectionService collectionService;
+    private Predicate<Podcast> loadFromCache = (p) -> true;
 
     public ExplorePanel() {
         this.setName("Explore");
@@ -43,15 +45,22 @@ public class ExplorePanel extends JPanel {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
+                loadFromCache = (p) -> {
+                    // get details
+                    collectionService.loadPodcast(p);
+                    return true;
+                };
                 reload();
             }
         });
     }
 
     public void reload() {
-        if (collectionService != null) {
-            load(collectionService);
-        }
+        new Thread(() -> {
+            if (collectionService != null) {
+                load(collectionService);
+            }
+        }).start();
     }
 
     public void load(CollectionService collectionService) {
@@ -69,14 +78,21 @@ public class ExplorePanel extends JPanel {
             e.printStackTrace();
         }
 
-        allPodcasts.stream().distinct().forEach((podcast) -> {
+        this.removeAll();
+        allPodcasts.stream().distinct().filter(loadFromCache).sorted((p1, p2) -> {
+            if (p1.getPublishDate() == null) {
+                return 1;
+            } else if (p2.getPublishDate() == null) {
+                return -1;
+            }
+            return p2.getPublishDate().compareTo(p1.getPublishDate());
+        }).forEach((podcast) -> {
             boolean exists = Arrays.stream(getComponents()).anyMatch((c) -> c.getName().equals(podcast.getName()));
             if (exists) {
                 return;
             }
 
             CollectionCardPanel panel = new CollectionCardPanel(podcast);
-            panel.setName(podcast.getName());
             panel.asyncLoad(collectionService);
             panel.addMouseListener(new MouseAdapter() {
                 @Override
