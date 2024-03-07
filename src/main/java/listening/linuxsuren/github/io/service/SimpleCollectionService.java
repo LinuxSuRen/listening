@@ -19,6 +19,7 @@ package listening.linuxsuren.github.io.service;
 import be.ceau.podcastparser.PodcastParser;
 import be.ceau.podcastparser.exceptions.InvalidFeedFormatException;
 import be.ceau.podcastparser.models.core.Feed;
+import be.ceau.podcastparser.models.support.Image;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -148,6 +149,7 @@ public class SimpleCollectionService implements CollectionService {
                 episode.setRssURL(rssAddress);
                 episode.setDuration(i.getDuration());
                 episode.setPublishDate(i.getPubDate());
+                episode.setLogoURL(feed.getImages().stream().findFirst().orElse(new Image()).getUrl());
                 if (i.getEnclosure() != null) {
                     episode.setAudioURL(i.getEnclosure().getUrl());
                     episode.setLength(i.getEnclosure().getLength());

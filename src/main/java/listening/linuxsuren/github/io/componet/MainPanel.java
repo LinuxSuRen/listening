@@ -104,11 +104,7 @@ public class MainPanel extends JPanel {
         explorePanel.addEvent((e) -> {
             CollectionPanel panel = new CollectionPanel(collectionService);
             panel.loadPodcast(e);
-            panel.addEvent((ee) -> {
-                EpisodePanel episodePanel = new EpisodePanel(ee);
-                episodePanel.setPlayEvent(player);
-                breadCrumbPanel.append(episodePanel);
-            });
+            panel.addEvent(showEpisode);
 
             JScrollPane scrollPane = new JScrollPane(panel);
             scrollPane.setName(e.getName());
@@ -163,6 +159,7 @@ public class MainPanel extends JPanel {
         JMenuItem reloadMenu = new JMenuItem("Reload");
         JMenuItem openConfigMenu = new JMenuItem("Open Config");
         JMenuItem addRssMenu = new JMenuItem("Add RSS");
+        JMenuItem recentEpisodeMenu = new JMenuItem("Recent Episodes");
         laterMenu.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -192,11 +189,32 @@ public class MainPanel extends JPanel {
                 addPodcastDialog.setVisible(true);
             }
         });
+        recentEpisodeMenu.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RecentEpisodePanel recentEpisodePanel = new RecentEpisodePanel();
+                recentEpisodePanel.reload();
+                recentEpisodePanel.addEvent(showEpisode);
+
+                ScrollPane recentEpisodeScrollPanel = new ScrollPane();
+                recentEpisodeScrollPanel.add(recentEpisodePanel);
+                recentEpisodeScrollPanel.setName("Recent");
+
+                breadCrumbPanel.append(recentEpisodeScrollPanel);
+            }
+        });
 
         popupMenu.add(laterMenu);
         popupMenu.add(reloadMenu);
         popupMenu.add(openConfigMenu);
         popupMenu.add(addRssMenu);
+        popupMenu.add(recentEpisodeMenu);
         return popupMenu;
     }
+
+    private EpisodeEvent showEpisode = ((Episode episode) -> {
+        EpisodePanel episodePanel = new EpisodePanel(episode);
+        episodePanel.setPlayEvent(player);
+        breadCrumbPanel.append(episodePanel);
+    });
 }

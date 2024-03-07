@@ -39,7 +39,7 @@ public class CollectionPanel extends JPanel {
     private Podcast podcast;
     private JPanel episodeListPanel = new JPanel();
     private final JComboBox<Integer> yearBox = new JComboBox<>();
-    private final JTextField searchField = new JTextField(15);;
+    private final JTextField searchField = new JTextField(15);
     private List<EpisodeEvent> eventList = new ArrayList<>();
 
     public CollectionPanel(CollectionService collectionService) {
