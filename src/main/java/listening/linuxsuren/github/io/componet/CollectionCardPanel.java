@@ -45,21 +45,13 @@ public class CollectionCardPanel extends JPanel {
         new Thread(() -> {
             collectionService.loadPodcast(podcast);
 
-            try {
-                BufferedImage image = ImageIO.read(CacheServer.wrapURL(podcast.getLogoURL()));
+            JLabel label = new JLabel();
+            label.setMinimumSize(new Dimension(80, 80));
+            label.setIcon(CachedImage.ScaledImageIcon(podcast.getLogoURL()));
+            label.addMouseListener(mouseListener);
+            label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-                JLabel label = new JLabel();
-                label.setMinimumSize(new Dimension(80, 80));
-                label.setIcon(new ImageIcon(image.getScaledInstance(80, 80, Image.SCALE_SMOOTH)));
-                label.addMouseListener(mouseListener);
-                label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-                add(label);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            add(label);
 
             repaint();
             revalidate();

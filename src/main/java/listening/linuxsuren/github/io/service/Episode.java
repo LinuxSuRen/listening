@@ -31,6 +31,7 @@ public class Episode {
     private String link;
     private ZonedDateTime publishDate;
     private Duration duration;
+    private String logoURL;
 
     public Episode() {}
 
@@ -128,6 +129,14 @@ public class Episode {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public String getLogoURL() {
+        return logoURL;
+    }
+
+    public void setLogoURL(String logoURL) {
+        this.logoURL = logoURL;
     }
 
     @Override
