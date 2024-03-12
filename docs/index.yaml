@@ -36,7 +36,7 @@ items:
     rss: https://feed.xyzfm.space/d33lyd3vpcet
   - name: Web Worker-前端程序员都爱听
     rss: https://feed.xyzfm.space/rv449dl9kqka
-  - name：VOA Learning English
+  - name: VOA Learning English
     rss: https://learningenglish.voanews.com/podcast/
   - name: All Ears English Podcast
     rss: https://feeds.megaphone.fm/allearsenglish
@@ -44,5 +44,7 @@ items:
     rss: https://espressoenglish.libsyn.com/rss
   - name: This American Life
     rss: https://www.thisamericanlife.org/podcast/rss.xml
-
-
+  - name: 迪魔王 Devmore - More about Dev
+    rss: http://www.ximalaya.com/album/52069269.xml
+  - name: 持续集成
+    rss: https://proxy.wavpub.com/chixujicheng.xml
