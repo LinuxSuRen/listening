@@ -18,3 +18,4 @@ buildNumber.properties
 .idea
 src/main/resources/listening/linuxsuren/github/io/service/index.yaml
 src/main/resources/listening/linuxsuren/github/io/service/README.md
+.settings/

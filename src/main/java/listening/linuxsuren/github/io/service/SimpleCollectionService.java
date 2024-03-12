@@ -111,7 +111,7 @@ public class SimpleCollectionService implements CollectionService {
             if (feed.getItems() != null && !feed.getItems().isEmpty()) {
                 podcast.setPublishDate(feed.getItems().get(0).getPubDate());
             }
-            podcast.setName(feed.getTitle());
+            podcast.setName(feed.getTitle().trim());
             if (feed.getLinks() != null && !feed.getLinks().isEmpty()) {
                 podcast.setLink(feed.getLinks().stream().iterator().next().getHref());
             }
@@ -142,9 +142,9 @@ public class SimpleCollectionService implements CollectionService {
             AtomicInteger index = new AtomicInteger();
             feed.getItems().forEach((i) -> {
                 Episode episode = new Episode();
-                episode.setPodcast(feed.getTitle());
+                episode.setPodcast(feed.getTitle().trim());
                 episode.setNumber(index.getAndIncrement());
-                episode.setTitle(i.getTitle().getText());
+                episode.setTitle(i.getTitle().getText().trim());
                 episode.setHtmlNote(i.getDescription().getText());
                 episode.setRssURL(rssAddress);
                 episode.setDuration(i.getDuration());
