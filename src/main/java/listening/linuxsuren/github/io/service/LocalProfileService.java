@@ -47,12 +47,14 @@ public class LocalProfileService implements ProfileService{
         try {
             profile = getProfile();
         } catch (IOException e) {
-            profile = new Profile();
+            e.printStackTrace();
         }
 
-        if (profile.getEpisodes() == null) {
+        if (profile == null) {
+            profile = new Profile();
             profile.setEpisodes(new ArrayList<>());
         }
+
         if (!profile.getEpisodes().contains(episode)) {
             profile.getEpisodes().add(episode);
         }
@@ -68,7 +70,7 @@ public class LocalProfileService implements ProfileService{
             return false;
         }
 
-        if (profile.getEpisodes() != null) {
+        if (profile != null && profile.getEpisodes() != null) {
             return profile.getEpisodes().contains(episode);
         }
         return false;
@@ -91,10 +93,18 @@ public class LocalProfileService implements ProfileService{
         try {
             profile = getProfile();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (profile == null) {
             profile = new Profile();
+            profile.setEpisodes(new ArrayList<>());
         }
 
         profile.setCurrentEpisode(episode);
+        profile.getEpisodes().stream().filter(e -> e.equals(episode)).findFirst().ifPresent((e) -> {
+            e.setIndex(episode.getIndex());
+        });
         write(profile);
     }
 
@@ -104,7 +114,12 @@ public class LocalProfileService implements ProfileService{
         try {
             profile = getProfile();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (profile == null) {
             profile = new Profile();
+            profile.setEpisodes(new ArrayList<>());
         }
 
         int validVolume = volume;
@@ -127,7 +142,12 @@ public class LocalProfileService implements ProfileService{
         try {
             profile = getProfile();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (profile == null) {
             profile = new Profile();
+            profile.setEpisodes(new ArrayList<>());
         }
 
         if (profile.getPersonalPodcasts() == null) {

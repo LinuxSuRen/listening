@@ -20,6 +20,8 @@ public class ToDoEpisode {
     private String podcast;
     private String episode;
     private String audioURL;
+    private String rssURL;
+    private double index;
     private double duration;
 
     public static ToDoEpisode ofEpisode(Episode episode) {
@@ -27,6 +29,7 @@ public class ToDoEpisode {
         todoEpisode.setPodcast(episode.getPodcast());
         todoEpisode.setEpisode(episode.getTitle());
         todoEpisode.setAudioURL(episode.getAudioURL());
+        todoEpisode.setRssURL(episode.getRssURL());
         if (episode.getDuration() != null) {
             todoEpisode.setDuration(episode.getDuration().toMillis());
         }
@@ -38,6 +41,7 @@ public class ToDoEpisode {
         episode.setPodcast(this.getPodcast());
         episode.setTitle(this.getEpisode());
         episode.setAudioURL(this.getAudioURL());
+        episode.setRssURL(this.getRssURL());
         return episode;
     }
 
@@ -71,6 +75,22 @@ public class ToDoEpisode {
 
     public void setAudioURL(String audioURL) {
         this.audioURL = audioURL;
+    }
+
+    public String getRssURL() {
+        return rssURL;
+    }
+
+    public void setRssURL(String rssURL) {
+        this.rssURL = rssURL;
+    }
+
+    public double getIndex() {
+        return index;
+    }
+
+    public void setIndex(double index) {
+        this.index = index;
     }
 
     @Override
