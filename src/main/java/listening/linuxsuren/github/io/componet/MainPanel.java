@@ -19,10 +19,13 @@ package listening.linuxsuren.github.io.componet;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.util.Duration;
 import listening.linuxsuren.github.io.server.CacheServer;
 import listening.linuxsuren.github.io.service.*;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -70,12 +73,14 @@ public class MainPanel extends JPanel {
         episode.setAudioURL("https://fake");
         try {
             Profile profile = new LocalProfileService().getProfile();
-            ToDoEpisode current = profile.getCurrentEpisode();
-            if (current != null) {
-                episode.setAudioURL(CacheServer.wrap(current.getAudioURL()));
-                lastDuration = current.getDuration() + "ms";
-                episode.setTitle(current.getEpisode());
-                episode.setPodcast(current.getPodcast());
+            if (profile != null) {
+                ToDoEpisode current = profile.getCurrentEpisode();
+                if (current != null) {
+                    episode.setAudioURL(CacheServer.wrap(current.getAudioURL()));
+                    lastDuration = current.getIndex() + "ms";
+                    episode.setTitle(current.getEpisode());
+                    episode.setPodcast(current.getPodcast());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,6 +137,29 @@ public class MainPanel extends JPanel {
             return label;
         });
         toDoEpisodeJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        toDoEpisodeJList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() != 2) {
+                    return;
+                }
+
+                Episode toPlayEpisode = toDoEpisodeJList.getSelectedValue().toEpisode();
+                new SimpleCollectionService().getEpisode(new Podcast("", toPlayEpisode.getRssURL())).stream().
+                        filter((episode -> episode.equals(toPlayEpisode))).findFirst().ifPresent((episode -> {
+                    Platform.runLater(() -> {
+                        EpisodePanel episodePanel = new EpisodePanel(episode);
+                        episodePanel.setPlayEvent(player);
+
+                        player.play(episode);
+                        player.seek(new Duration(toDoEpisodeJList.getSelectedValue().getIndex()));
+                        player.setTitleLabel(episode.getTitle());
+
+                        breadCrumbPanel.append(episodePanel);
+                    });
+                }));
+            }
+        });
         panel.add(toDoEpisodeJList);
 
         JScrollPane scrollPane = new JScrollPane(panel);

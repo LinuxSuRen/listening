@@ -17,6 +17,8 @@ limitations under the License.
 package listening.linuxsuren.github.io.componet;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -47,14 +49,7 @@ public class Player extends BorderPane implements PlayEvent {
         mpane = new Pane();
         titleLabel = new Label();
         mpane.getChildren().add(view);
-        player.currentTimeProperty().addListener(ov -> {
-            ToDoEpisode todoEpisode = new ToDoEpisode();
-            todoEpisode.setPodcast(episode.getPodcast());
-            todoEpisode.setEpisode(episode.getTitle());
-            todoEpisode.setAudioURL(episode.getAudioURL());
-            todoEpisode.setDuration(player.getCurrentTime().toMillis());
-            new LocalProfileService().setCurrentEpisode(todoEpisode);
-        });
+        player.currentTimeProperty().addListener(new PlayerDurationRecord(episode, player));
         player.setOnEndOfMedia(new playNext(this));
 
         // inorder to add the view
@@ -91,14 +86,7 @@ public class Player extends BorderPane implements PlayEvent {
             player.setStopTime(player.getStopTime());
             bar.reset();
         });
-        player.currentTimeProperty().addListener(ov -> {
-            ToDoEpisode todoEpisode = new ToDoEpisode();
-            todoEpisode.setPodcast(episode.getPodcast());
-            todoEpisode.setEpisode(episode.getTitle());
-            todoEpisode.setAudioURL(episode.getAudioURL());
-            todoEpisode.setDuration(player.getCurrentTime().toMillis());
-            new LocalProfileService().setCurrentEpisode(todoEpisode);
-        });
+        player.currentTimeProperty().addListener(new PlayerDurationRecord(episode, player));
         player.setOnEndOfMedia(new playNext(this));
         titleLabel.setText(episode.getTitle());
         view.setMediaPlayer(player);
@@ -140,9 +128,13 @@ public class Player extends BorderPane implements PlayEvent {
                 du.add(Duration.valueOf(i));
             }
         }
-        if (du == null) {
-            return;
+        if (du != null) {
+            seek(du);
         }
+    }
+
+    @Override
+    public void seek(Duration du) {
         player.setStartTime(du);
         player.seek(du);
         bar.updatesValues();
@@ -175,5 +167,24 @@ public class Player extends BorderPane implements PlayEvent {
                 throw new RuntimeException(e);
             }
         }
+    }
+}
+
+class PlayerDurationRecord implements InvalidationListener {
+    private final Episode episode;
+    private final MediaPlayer player;
+
+    public PlayerDurationRecord(Episode episode, MediaPlayer player) {
+        this.episode = episode;
+        this.player = player;
+    }
+    @Override
+    public void invalidated(Observable observable) {
+        ToDoEpisode todoEpisode = new ToDoEpisode();
+        todoEpisode.setPodcast(episode.getPodcast());
+        todoEpisode.setEpisode(episode.getTitle());
+        todoEpisode.setAudioURL(episode.getAudioURL());
+        todoEpisode.setIndex(player.getCurrentTime().toMillis());
+        new LocalProfileService().setCurrentEpisode(todoEpisode);
     }
 }

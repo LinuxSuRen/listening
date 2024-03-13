@@ -16,6 +16,7 @@ limitations under the License.
 
 package listening.linuxsuren.github.io.componet;
 
+import javafx.util.Duration;
 import listening.linuxsuren.github.io.service.Episode;
 
 public interface PlayEvent {
@@ -30,4 +31,5 @@ public interface PlayEvent {
     void setTitleLabel(String titleLabel);
 
     void seek(String timeLine);
+    void seek(Duration duration);
 }

@@ -21,6 +21,7 @@ import listening.linuxsuren.github.io.service.SimpleCollectionService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.ZonedDateTime;
@@ -47,7 +48,11 @@ public class RecentEpisodePanel extends JPanel implements ReloadAble {
         recentBox.addItem(RecentType.Week);
         recentBox.addItem(RecentType.BiWeek);
         recentBox.addItem(RecentType.Month);
-        recentBox.addItemListener((e) -> reload());
+        recentBox.addItemListener((e) -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                reload();
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.add(recentBox);
@@ -64,7 +69,7 @@ public class RecentEpisodePanel extends JPanel implements ReloadAble {
             RecentType recentType = (RecentType) recentBox.getSelectedItem();
             final ZonedDateTime expectedRange =
                     ZonedDateTime.now().minusDays(recentType == null ? RecentType.Week.getDays() : recentType.getDays());
-            service.getAll().forEach(podcast -> {
+            service.getAll().stream().distinct().forEach(podcast -> {
                 service.getEpisode(podcast).stream().filter((e) -> e.getPublishDate().isAfter(expectedRange)).
                         forEach(episode -> {
                     EpisodeCard card = new EpisodeCard(episode);

@@ -70,9 +70,11 @@ public class ExplorePanel extends JPanel {
 
         try {
             Profile profile = new LocalProfileService().getProfile();
-            List<Podcast> personalPodcasts = profile.getPersonalPodcasts();
-            if (personalPodcasts != null && !personalPodcasts.isEmpty()) {
-                allPodcasts.addAll(personalPodcasts);
+            if (profile != null) {
+                List<Podcast> personalPodcasts = profile.getPersonalPodcasts();
+                if (personalPodcasts != null && !personalPodcasts.isEmpty()) {
+                    allPodcasts.addAll(personalPodcasts);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

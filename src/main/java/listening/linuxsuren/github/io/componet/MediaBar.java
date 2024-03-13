@@ -58,7 +58,9 @@ public class MediaBar extends HBox {
         vol.valueProperty().addListener((o, oldNum, newNum) -> new LocalProfileService().setVolume(newNum.intValue()));
         try {
             Profile profile = new LocalProfileService().getProfile();
-            vol.setValue(profile.getVolume());
+            if (profile != null) {
+                vol.setValue(profile.getVolume());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
