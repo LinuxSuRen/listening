@@ -24,8 +24,6 @@ import listening.linuxsuren.github.io.server.CacheServer;
 import listening.linuxsuren.github.io.service.*;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -128,53 +126,25 @@ public class MainPanel extends JPanel {
     }
 
     private JComponent createRightPanel() {
-        JPanel panel = new JPanel();
+        TodoListPanel panel = new TodoListPanel((episode) -> {
+            Episode rawEpisode = episode.toEpisode();
+            EpisodePanel episodePanel = new EpisodePanel(rawEpisode);
+            episodePanel.setPlayEvent(player);
 
-        JList<ToDoEpisode> toDoEpisodeJList = new JList<>();
-        toDoEpisodeJList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
-            JLabel label = new JLabel(value.getEpisode());
-            label.setToolTipText(value.getPodcast());
-            return label;
+            player.play(rawEpisode);
+            player.seek(new Duration(episode.getIndex()));
+            player.setTitleLabel(rawEpisode.getTitle());
+
+            breadCrumbPanel.append(episodePanel);
         });
-        toDoEpisodeJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        toDoEpisodeJList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() != 2) {
-                    return;
-                }
-
-                Episode toPlayEpisode = toDoEpisodeJList.getSelectedValue().toEpisode();
-                new SimpleCollectionService().getEpisode(new Podcast("", toPlayEpisode.getRssURL())).stream().
-                        filter((episode -> episode.equals(toPlayEpisode))).findFirst().ifPresent((episode -> {
-                    Platform.runLater(() -> {
-                        EpisodePanel episodePanel = new EpisodePanel(episode);
-                        episodePanel.setPlayEvent(player);
-
-                        player.play(episode);
-                        player.seek(new Duration(toDoEpisodeJList.getSelectedValue().getIndex()));
-                        player.setTitleLabel(episode.getTitle());
-
-                        breadCrumbPanel.append(episodePanel);
-                    });
-                }));
-            }
-        });
-        panel.add(toDoEpisodeJList);
 
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setVisible(false);
         scrollPane.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                try {
-                    Profile profile = new LocalProfileService().getProfile();
-
-                    toDoEpisodeJList.setListData(profile.getEpisodes().toArray(new ToDoEpisode[0]));
-                    scrollPane.getParent().revalidate();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                scrollPane.getParent().revalidate();
+                panel.reload();
             }
         });
         return scrollPane;
